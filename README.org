@@ -1,0 +1,3 @@
+#+title: NEB Orchestrator
+
+Modular Snakemake workflow for automated NEB calculations with ML potentials.

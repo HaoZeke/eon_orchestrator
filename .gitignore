@@ -1,0 +1,105 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.nav
+*.snm
+*.toc
+*.lot
+*.lof
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bcf
+*.run.xml
+
+# PDFs (except final submissions)
+*.pdf
+!submissions/*/pdfs/*.pdf
+
+# Temporary files
+*~
+\#*\#
+.DS_Store
+
+# ArXiv tarballs
+*.tar.gz
+!submissions/*/snapshot/*.tar.gz
+
+# Org export intermediates
+*.tex~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Snakemake
+.snakemake/
+*.snakemake_metadata
+results/
+*.dot
+
+# Documentation build
+docs/source/_build/
+docs/source/autoapi/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+tests/baseline/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Configuration overrides (keep examples, ignore personal configs)
+my_*.yaml
+local_config.yaml
+
+# Claude Code
+.claude/
+CLAUDE.md
+
+# Pixi
+.pixi/

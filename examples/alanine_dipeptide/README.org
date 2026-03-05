@@ -1,0 +1,96 @@
+#+title: Alanine Dipeptide Conformational Change
+#+date: 2026-03-13
+
+* Overview
+
+Alanine dipeptide (Ace-Ala-Nme) is the canonical benchmark system for studying
+conformational transitions in peptides. This example demonstrates the C7eq → C7ax
+transition, involving rotation around the phi (φ) and psi (ψ) backbone dihedral angles.
+
+* Why This System Matters
+
+** Benchmark System
+Alanine dipeptide is the "hydrogen atom" of peptide conformational studies:
+- Small enough for exhaustive sampling (22 atoms)
+- Large enough to show realistic peptide behavior
+- Well-characterized free energy landscape
+- Standard test for enhanced sampling methods
+
+** IRA Alignment Value
+The C7eq → C7ax transition involves:
+- ~140° rotation in phi angle
+- ~110° rotation in psi angle
+- Significant backbone reorganization
+- Multiple local minima along the path
+
+Without IRA alignment:
+- Linear interpolation creates steric clashes
+- Initial path may cross high-energy regions
+- NEB optimization may converge to wrong saddle
+
+With IRA alignment:
+- Correct backbone correspondence identified
+- Smooth interpolation in dihedral space
+- Realistic initial path for NEB optimization
+
+* Expected Results
+
+** Barrier Height
+
+Literature values (various methods):
+
+| Method | Barrier (kcal/mol) | Barrier (eV) | Reference |
+|--------+-------------------+--------------+-----------|
+| PET-MAD-XS v1.5.0 | ~3-5 (estimated) | ~0.13-0.22 | This work |
+| AMBER ff99SB | ~4.5 | ~0.20 | Standard force field |
+| CHARMM36 | ~4.2 | ~0.18 | Standard force field |
+| DFT/B3LYP | ~5.1 | ~0.22 | QM benchmark |
+
+*Note*: PET-MAD predictions are estimates; actual values depend on model accuracy
+for peptide backbone conformations.
+
+** Ramachandran Plot
+
+The transition traces a path on the Ramachandran plot:
+- C7eq: φ ≈ -80°, ψ ≈ 150° (extended β-region)
+- C7ax: φ ≈ 60°, ψ ≈ 40° (α-helical region)
+- Path crosses the forbidden region (steric clash)
+
+* Files
+
+- =c7eq.xyz=: C7eq conformation (φ=-80°, ψ=150°)
+- =c7ax.xyz=: C7ax conformation (φ=60°, ψ=40°)
+- =config.yaml=: Pre-configured (19 images, CPU mode)
+
+* Running the Example
+
+#+begin_src bash
+cd /home/rgoswami/Git/Github/epfl/pixi_envs/repro/eon_orchestrator
+
+# Dry-run first
+pixi run -e eon validate
+
+# Full run (~5-10 min for 22 atoms on CPU)
+pixi run -e eon alanine
+#+end_src
+
+* Comparison with Other Examples
+
+| Feature | HCN | SN2 | Diels-Alder | Alanine |
+|---------+-----+-----+-------------+---------|
+| Atoms | 3 | 6 | 16 | 22 |
+| Type | Isomerization | Substitution | Cycloaddition | Conformational |
+| IRA value | Minor | Moderate | Critical | High |
+| Complexity | 1D | 1D + rotation | Multi-molecular | Dihedral rotation |
+
+Alanine dipeptide demonstrates:
+- Flexible backbone with multiple rotatable bonds
+- Conformational (not chemical) change
+- Relevance to protein folding studies
+- Connection to Ramachandran analysis
+
+* References
+
+- Alanine dipeptide benchmark: [[https://doi.org/10.1021/jp049114s][J. Phys. Chem. B 2004, 108, 10066]]
+- Ramachandran plot: [[https://doi.org/10.1016/S0022-2836(63)80023-6][J. Mol. Biol. 1963, 7, 95]]
+- IRA alignment: rgpycrumbs documentation

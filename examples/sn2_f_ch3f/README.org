@@ -1,0 +1,154 @@
+#+title: S_N2 Reaction Example: F⁻ + CH₃F → FCH₃ + F⁻
+#+date: 2026-03-13
+
+* Overview
+
+This example demonstrates the NEB Orchestrator workflow on a classic S_N2
+(backside attack) reaction. This system shows why IRA alignment is critical
+for reactions involving large rotations and inversions.
+
+* Why This Reaction Demonstrates IRA Value
+
+The S_N2 reaction mechanism involves:
+
+1. *Backside attack*: Incoming F⁻ approaches from 180° relative to leaving F
+2. *Umbrella inversion*: CH₃ group flips during the reaction
+3. *Large translation*: F⁻ moves ~3 Å from reactant to product
+4. *Symmetric barrier*: Transition state has D₃h symmetry
+
+Without IRA alignment:
+- Linear interpolation would place atoms on collision courses
+- Initial IDPP path would have unphysically high energies
+- NEB optimization might converge to wrong saddle or fail entirely
+
+With IRA alignment:
+- Correct atom mapping identified via Hungarian algorithm
+- Rotation and translation removed before interpolation
+- IDPP path is chemically reasonable from the start
+
+* Expected Results
+
+** Barrier Height
+
+Literature values (various methods):
+
+| Method | Barrier (kcal/mol) | Barrier (eV) |
+|--------+-------------------+--------------|
+| PET-MAD-XS v1.5.0 | ~20-25 (estimated) | ~0.9-1.1 |
+| CCSD(T)/CBS | 21.2 | 0.92 |
+| ωB97X-D/aug-cc-pVTZ | 22.5 | 0.98 |
+| B3LYP/6-31+G(d) | 18.3 | 0.79 |
+
+*Note*: PET-MAD predictions are estimates; actual values depend on model accuracy
+for anionic systems and transition states.
+
+** Transition State Geometry
+
+The TS should show:
+- D₃h symmetry (trigonal bipyramidal)
+- Two equivalent C-F bonds (~2.0 Å, elongated from 1.38 Å)
+- Planar CH₃ group (sp²-like carbon)
+- Imaginary frequency corresponding to F-C-F asymmetric stretch
+
+* Files
+
+- =reactant.con=: F⁻ + CH₃F (separated by 3.5 Å)
+- =product.con=: FCH₃ + F⁻ (inverted, F⁻ on opposite side)
+- =config.yaml=: Pre-configured for S_N2 (17 images, symmetric)
+
+* Running the Example
+
+** Step 1: Copy and Configure
+
+#+begin_src bash
+cd examples/sn2_f_ch3f
+cp config.yaml ../../my_sn2_config.yaml
+#+end_src
+
+Edit paths in =my_sn2_config.yaml=:
+#+begin_src yaml
+systems:
+  sn2_f_ch3f:
+    reactant: /absolute/path/to/eon_orchestrator/examples/sn2_f_ch3f/reactant.con
+    product: /absolute/path/to/eon_orchestrator/examples/sn2_f_ch3f/product.con
+#+end_src
+
+** Step 2: Run Workflow
+
+#+begin_src bash
+cd ../../
+snakemake --configfile my_sn2_config.yaml -c4 --use-conda
+#+end_src
+
+** Step 3: Analyze Results
+
+Check the energy profile:
+#+begin_src bash
+cat results/neb/sn2_f_ch3f/results.dat
+#+end_src
+
+The barrier should be the energy of the climbing image (center image for
+symmetric reaction) relative to the reactant.
+
+* Comparing With and Without IRA
+
+To see the IRA benefit, try running with =use_ira: false=:
+
+#+begin_src yaml
+systems:
+  sn2_f_ch3f:
+    reactant: ...
+    product: ...
+    use_ira: false  # Disable IRA alignment
+#+end_src
+
+Expected differences:
+- Initial IDPP path energies will be much higher without IRA
+- May see atomic collisions in the interpolated path
+- NEB may require more iterations to converge
+- Risk of converging to incorrect saddle increases
+
+* Visualization
+
+View the reaction path:
+#+begin_src bash
+ase gui results/neb/sn2_f_ch3f/neb.con
+#+end_src
+
+You should see:
+- F⁻ approaching from one side
+- CH₃ umbrella inverting
+- F⁻ leaving from opposite side
+
+* Troubleshooting
+
+** High Initial Energies
+
+If the initial path has very high energies (>10 eV above reactant):
+- Check that atom ordering is consistent between reactant and product
+- Verify IRA alignment worked (check logs)
+- Try increasing =alignment.kmax= to 2.5 or 3.0
+
+** Asymmetric Barrier
+
+For this symmetric reaction, the barrier should be at the center image.
+If it's off-center:
+- Check that reactant and product geometries are truly symmetric
+- Verify atom ordering matches between endpoints
+- May need more images (try 19 or 21)
+
+* References
+
+- S_N2 reaction mechanism: [[https://en.wikipedia.org/wiki/SN2_reaction][Wikipedia]]
+- Benchmark study: [[https://doi.org/10.1021/ct900315h][J. Chem. Theory Comput. 2009, 5, 2212]]
+- IRA alignment: rgpycrumbs documentation
+
+* Next Steps
+
+After running this example:
+1. Try with your own nucleophilic substitution reactions
+2. Compare barriers for different leaving groups (Cl, Br, I)
+3. Study solvent effects (requires implicit/explicit solvation)
+4. Explore stereochemistry (chiral centers, inversion vs retention)
+
+See [[file:../../docs/orgmode/quickstart.org][Quickstart Guide]] for general usage instructions.

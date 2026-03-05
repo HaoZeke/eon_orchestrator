@@ -1,0 +1,99 @@
+#+title: Vinyl Alcohol → Acetaldehyde Tautomerization
+#+date: 2026-03-13
+
+* Overview
+
+Vinyl alcohol (enol) tautomerizes to acetaldehyde (keto) via a 1,3-hydrogen
+shift. This is a classic example of keto-enol tautomerization and demonstrates
+IRA alignment value for hydrogen transfer reactions.
+
+* Source Structures
+
+Reactant and product structures are from:
+
+#+begin_quote
+R. Goswami, M. Gunde, and H. Jónsson, "Enhanced climbing image nudged elastic
+band method with hessian eigenmode alignment," Jan. 22, 2026, arXiv:
+arXiv:2601.12630. doi: [[https://doi.org/10.48550/arXiv.2601.12630][10.48550/arXiv.2601.12630]].
+#+end_quote
+
+* Why This Demonstrates IRA Value
+
+The 1,3-hydrogen shift involves:
+- H atom migration from O to C (or vice versa)
+- C=C double bond shifting to C=O
+- Significant electronic reorganization
+- 8 atoms with non-trivial correspondence
+
+Without IRA alignment:
+- H atom may be incorrectly mapped
+- Initial path may have unrealistic H positions
+- NEB may converge to wrong mechanism
+
+With IRA alignment:
+- Correct H-atom correspondence identified
+- Smooth interpolation of H-transfer coordinate
+- Realistic initial path for NEB optimization
+
+* Expected Results
+
+** Barrier Height
+
+Literature values:
+
+| Method | Barrier (kcal/mol) | Barrier (eV) | Reference |
+|--------+-------------------+--------------+-----------|
+| PET-MAD-XS v1.5.0 | ~50-60 (estimated) | ~2.2-2.6 | This work |
+| CCSD(T)/CBS | ~55 | ~2.4 | Literature benchmark |
+| DFT/B3LYP | ~52 | ~2.3 | Literature benchmark |
+
+*Note*: This is a high-barrier reaction; enol form is metastable.
+
+** Reaction Mechanism
+
+Concerted 1,3-H shift:
+- H migrates from O to C (or C to O)
+- C=C π bond becomes C=O π bond
+- Planar transition state
+
+* Files
+
+- =reactant.xyz=: Vinyl alcohol (enol form) [1]
+- =product.xyz=: Acetaldehyde (keto form) [1]
+- =config.yaml=: Pre-configured (17 images, CPU mode)
+
+* Running the Example
+
+#+begin_src bash
+cd /home/rgoswami/Git/Github/epfl/pixi_envs/repro/eon_orchestrator
+
+# Dry-run first
+pixi run -e eon validate
+
+# Full run (~5-10 min for 8 atoms on CPU)
+pixi run -e eon vinyl-alcohol
+#+end_src
+
+* Comparison with Other Examples
+
+| Feature | HCN | SN2 | Diels-Alder | Vinyl Alcohol |
+|---------+-----+-----+-------------+---------------|
+| Atoms | 3 | 6 | 16 | 8 |
+| Type | Isomerization | Substitution | Cycloaddition | Tautomerization |
+| IRA value | Minor | Moderate | Critical | High |
+| H-transfer | No | No | No | *Yes* |
+
+Vinyl alcohol demonstrates:
+- Hydrogen transfer mechanism
+- Keto-enol tautomerization
+- Intermediate complexity (8 atoms)
+- Faster than Diels-Alder/alanine
+
+* References
+
+[1] R. Goswami, M. Gunde, and H. Jónsson, "Enhanced climbing image nudged
+    elastic band method with hessian eigenmode alignment," arXiv:2601.12630,
+    Jan. 2026. doi: [[https://doi.org/10.48550/arXiv.2601.12630][10.48550/arXiv.2601.12630]].
+
+- Keto-enol tautomerization: [[https://en.wikipedia.org/wiki/Keto-enol_tautomerism][Wikipedia]]
+- IRA alignment: rgpycrumbs documentation

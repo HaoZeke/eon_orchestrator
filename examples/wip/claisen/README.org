@@ -1,0 +1,76 @@
+#+title: Claisen Rearrangement (Work in Progress)
+#+date: 2026-03-13
+
+* Status: Experimental
+
+This example demonstrates the *permutation sensitivity problem* in NEB calculations.
+The screening script (screen_permutations.py) is provided as-is for research purposes
+and is *not part of the main workflow*. It has not been thoroughly benchmarked.
+
+* The Problem
+
+The Claisen rearrangement is a [3,3]-sigmatropic rearrangement involving
+bond breaking and significant structural reorganization. For such complex reactions,
+atom mapping is non-trivial:
+
+- 6 carbon backbone undergoes bond reorganization
+- Multiple hydrogen atoms on equivalent carbons
+- Even single H swaps can lead to completely different saddle points
+- Standard IRA alignment assumes correct initial permutation
+
+* Why This Matters
+
+Our testing showed that:
+1. Exhaustive backbone search was needed to find correct permutation
+2. Single H-atom swaps (atoms 6,7 on same C) changed the saddle completely
+3. Cheap 3-point IDPP estimates correlate poorly with full NEB barriers
+4. No simple algorithmic solution exists for general cases
+
+* The Screening Script (Experimental)
+
+The included screen_permutations.py script:
+- Generates permutations via Hungarian algorithm + random rotations
+- Evaluates with 3-point IDPP midpoint energy (very rough estimate)
+- Ranks candidates by estimated barrier
+
+*Limitations*:
+- IDPP midpoint is NOT a reliable barrier predictor
+- Works for simple cases, fails for complex rearrangements
+- Requires manual inspection of candidates
+- Computationally expensive (N full energy evaluations)
+
+* Recommended Approach (Current Best Practice)
+
+For complex reactions:
+1. Run IRA alignment (workflow handles this automatically)
+2. Generate IDPP path (workflow handles this)
+3. *Visually inspect* the path: =ase gui results/idpp/*/path/*.xyz=
+4. Check for atomic collisions or unphysical geometries
+5. If path looks wrong, try different IRA kmax values (1.5, 2.0, 3.0)
+6. Consider manual permutation based on chemical intuition
+7. Validate saddle with dimer search
+
+* Future Work
+
+A robust permutation-invariant path generation method is an open research problem.
+Potential approaches:
+- Substructure matching for bond-breaking reactions
+- CSHDA integration for alternative permutations
+- Fragmentation-based permutation detection
+- Machine learning for permutation prediction
+
+This deserves a dedicated algorithm paper, separate from the workflow orchestration
+focus of NEB Orchestrator.
+
+* Files
+
+- =reactant.con=: Allyl vinyl ether (reactant)
+- =product.con=: 4-pentenal (product)
+- =screen_permutations.py=: Experimental screening script (use at own risk)
+- =config.yaml=: Workflow configuration (standard NEB setup)
+
+* References
+
+- Claisen rearrangement mechanism: https://en.wikipedia.org/wiki/Claisen_rearrangement
+- Permutation methods: Schmerwitz et al., JCTC 2024 (SIDPP)
+- IRA alignment: rgpycrumbs documentation

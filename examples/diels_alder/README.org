@@ -1,0 +1,107 @@
+#+title: Diels-Alder Reaction Example
+#+date: 2026-03-13
+
+* Overview
+
+The Diels-Alder reaction is a classic [4+2] cycloaddition between a conjugated
+diene (butadiene) and a dienophile (ethylene) to form a cyclohexene ring. This
+example demonstrates why IRA alignment is *critical* for multi-molecular reactions.
+
+* Source Structures
+
+Reactant and product structures are from:
+
+#+begin_quote
+R. Goswami, M. Gunde, and H. Jónsson, "Enhanced climbing image nudged elastic
+band method with hessian eigenmode alignment," Jan. 22, 2026, arXiv:
+arXiv:2601.12630. doi: [[https://doi.org/10.48550/arXiv.2601.12630][10.48550/arXiv.2601.12630]].
+#+end_quote
+
+The parent Diels-Alder reaction (butadiene + ethylene → cyclohexene) serves as
+a benchmark for multi-molecular NEB calculations.
+
+* Why This Demonstrates IRA Value
+
+Unlike simple isomerizations (HCN) or single-molecule substitutions (SN2), the
+Diels-Alder reaction involves:
+
+1. *Two separate molecules* approaching from ~4 Å separation
+2. *Simultaneous bond formation* at two positions (concerted mechanism)
+3. *Ring closure* with significant structural reorganization
+4. *Complex atom mapping* (16 atoms, non-obvious correspondence)
+
+Without IRA alignment:
+- Linear interpolation would place molecules on collision courses
+- Initial IDPP path would have extreme atomic overlaps
+- NEB optimization would likely fail or converge to wrong saddle
+
+With IRA alignment:
+- Correct relative orientation identified via Hungarian algorithm
+- Translation and rotation removed before interpolation
+- IDPP path shows realistic approach trajectory
+
+* Expected Results
+
+** Barrier Height
+
+Literature values from Ref. [1] and other methods:
+
+| Method | Barrier (kcal/mol) | Barrier (eV) | Reference |
+|--------+-------------------+--------------+-----------|
+| Enhanced CI-NEB | ~27 | ~1.17 | Goswami et al. [1] |
+| CCSD(T)/CBS | 27.5 | 1.19 | Literature benchmark |
+| ωB97X-D/def2-TZVP | 26.8 | 1.16 | Literature benchmark |
+| B3LYP/6-31G(d) | 24.2 | 1.05 | Literature benchmark |
+
+*Note*: PET-MAD-XS predictions may differ; actual values depend on model accuracy
+for pericyclic reactions.
+
+** Transition State Geometry
+
+The TS should show:
+- C₂ᵥ symmetry (synchronous bond formation)
+- Two forming C-C bonds (~2.2 Å, vs 1.54 Å in product)
+- Planar arrangement of reacting carbons
+- Imaginary frequency corresponding to symmetric ring closure
+
+* Files
+
+- =reactant.xyz=: Butadiene + ethylene (separated by ~4 Å) [1]
+- =product.xyz=: Cyclohexene (chair-like conformation) [1]
+- =config.yaml=: Pre-configured for Diels-Alder (20 images)
+
+* Running the Example
+
+#+begin_src bash
+cd /home/rgoswami/Git/Github/epfl/pixi_envs/repro/eon_orchestrator
+
+# Dry-run first
+pixi run -e eon validate
+
+# Full run (CPU mode, ~10-20 min for 16 atoms)
+pixi run -e eon diels-alder
+#+end_src
+
+* Comparison with Simpler Examples
+
+| Feature | HCN | SN2 | Diels-Alder |
+|---------+-----+-----+-------------|
+| Atoms | 3 | 6 | 16 |
+| Molecules | 1 | 2 (ion + neutral) | 2 (neutral) |
+| IRA value | Minor | Moderate | *Critical* |
+| Barrier | ~1.8 eV | ~1.1 eV | ~1.2 eV |
+| Complexity | Linear | Backside attack | Ring closure |
+
+The Diels-Alder reaction is the most realistic test of IRA alignment because:
+- Multiple independent molecules must be correctly oriented
+- No obvious "reaction coordinate" like in SN2
+- Ring formation requires coordinated motion of many atoms
+
+* References
+
+[1] R. Goswami, M. Gunde, and H. Jónsson, "Enhanced climbing image nudged
+    elastic band method with hessian eigenmode alignment," arXiv:2601.12630,
+    Jan. 2026. doi: [[https://doi.org/10.48550/arXiv.2601.12630][10.48550/arXiv.2601.12630]].
+
+- Diels-Alder mechanism: [[https://en.wikipedia.org/wiki/Diels%E2%80%93Alder_reaction][Wikipedia]]
+- IRA alignment: rgpycrumbs documentation

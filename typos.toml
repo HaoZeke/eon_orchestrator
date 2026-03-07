@@ -1,0 +1,23 @@
+# Typos spell checker configuration
+# https://github.com/crate-ci/typos
+
+[default]
+# Case sensitivity
+extend-ignore-identifiers-re = []
+
+[default.extend-words]
+# Scientific/technical terms that look like typos
+neb = "neb"
+IDPP = "IDPP"
+MMF = "MMF"
+MEP = "MEP"
+PES = "PES"
+RMSD = "RMSD"
+IRA = "IRA"
+Snakemake = "Snakemake"
+metatensor = "metatensor"
+metatomic = "metatomic"
+
+[files]
+# Don't check these files
+extend-exclude = ["*.bib", "pixi.lock", "*.png", "*.pdf"]

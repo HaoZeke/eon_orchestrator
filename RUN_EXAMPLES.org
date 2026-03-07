@@ -1,0 +1,104 @@
+#+title: Running NEB Orchestrator Examples
+#+date: 2026-03-13
+
+* Prerequisites
+
+1. pixi installed (https://pixi.sh)
+2. eOn client (eonclient in PATH) - optional for full runs
+
+Install eOn with pixi (optional):
+#+begin_src bash
+pixi install --feature eon
+#+end_src
+
+* Running Examples
+
+** Validate Workflow (Dry-Run)
+
+#+begin_src bash
+cd /home/rgoswami/Git/Github/epfl/pixi_envs/repro/eon_orchestrator
+pixi run validate
+#+end_src
+
+** HCN Isomerization
+
+#+begin_src bash
+# Dry-run first
+pixi run validate
+
+# Full run (requires eonclient)
+pixi run hcn
+#+end_src
+
+** SN2 Reaction
+
+#+begin_src bash
+# Dry-run first
+pixi run validate
+
+# Full run (requires eonclient)
+pixi run sn2
+#+end_src
+
+* Generating 2D Landscape Plots
+
+After NEB calculations complete, generate 2D RMSD landscapes:
+
+** For HCN
+
+#+begin_src bash
+pixi run plot-hcn
+#+end_src
+
+** For SN2
+
+#+begin_src bash
+pixi run plot-sn2
+#+end_src
+
+* Manual Plot Generation (Alternative)
+
+If you prefer to run the plot command manually:
+
+#+begin_src bash
+cd results/neb/hcn_isom/
+python -m rgpycrumbs.cli eon plt-neb \
+  --con-file neb.con \
+  --plot-type landscape \
+  --project-path \
+  --show-pts \
+  --landscape-path all \
+  --plot-structures crit_points \
+  --surface-type grad_imq \
+  --ira-kmax 14 \
+  --show-legend
+#+end_src
+
+* Expected Outputs
+
+** HCN Isomerization
+- Barrier: ~1.8 eV (PET-MAD-XS v1.5.0)
+- Linear → Linear isomerization
+- Simple 2D landscape (3 atoms)
+
+** SN2 Reaction
+- Barrier: ~0.9-1.1 eV (~20-25 kcal/mol)
+- Backside attack with umbrella inversion
+- 2D landscape shows rotation/inversion (6 atoms)
+
+* Troubleshooting
+
+** eonclient not found
+Install eOn separately or build from source:
+#+begin_src bash
+pixi install --feature eon
+#+end_src
+
+** Model download fails
+Check internet connection and HuggingFace access.
+
+** CUDA out of memory
+Change device to cpu in config.yaml.
+
+** pixi not found
+Install pixi: https://pixi.sh/latest/#installation

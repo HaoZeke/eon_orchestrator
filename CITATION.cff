@@ -1,0 +1,70 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "NEB Orchestrator"
+abstract: "A modular Snakemake workflow for automated Nudged Elastic Band (NEB) calculations using eOn with machine learning potentials (PET-MAD/uPET)."
+authors:
+  - family-names: "Goswami"
+    given-names: "Rohit"
+    orcid: "https://orcid.org/0000-0002-6753-6885"
+    email: "rgoswami@ieee.org"
+    affiliation: "EPFL"
+version: "0.1.0"
+date-released: "2026-03-13"
+url: "https://github.com/HaoZeke/eon_orchestrator"
+license: MIT
+repository: "https://github.com/HaoZeke/eon_orchestrator"
+repository-code: "https://github.com/HaoZeke/eon_orchestrator"
+keywords:
+  - "NEB"
+  - "nudged elastic band"
+  - "transition state"
+  - "machine learning potential"
+  - "PET-MAD"
+  - "Snakemake"
+  - "workflow"
+  - "computational chemistry"
+
+references:
+  - type: article
+    title: "Enhanced Climbing Image Nudged Elastic Band Method with Hessian Eigenmode Alignment"
+    authors:
+      - family-names: "Goswami"
+        given-names: "Rohit"
+    year: 2026
+    doi: "10.48550/arXiv.2601.12630"
+    
+  - type: article
+    title: "Two-Dimensional RMSD Projections for Reaction Path Visualization and Validation"
+    authors:
+      - family-names: "Goswami"
+        given-names: "Rohit"
+    journal: "MethodsX"
+    year: 2026
+    doi: "10.1016/j.mex.2026.103851"
+    
+  - type: article
+    title: "Efficient Implementation of Gaussian Process Regression Accelerated Saddle Point Searches with Application to Molecular Reactions"
+    authors:
+      - family-names: "Goswami"
+        given-names: "Rohit"
+    journal: "Journal of Chemical Theory and Computation"
+    year: 2025
+    doi: "10.1021/acs.jctc.5c00866"
+    
+  - type: article
+    title: "Adaptive Pruning for Increased Robustness and Reduced Computational Overhead in Gaussian Process Accelerated Saddle Point Searches"
+    authors:
+      - family-names: "Goswami"
+        given-names: "Rohit"
+    journal: "ChemPhysChem"
+    year: 2025
+    doi: "10.1002/cphc.202500730"
+    
+  - type: article
+    title: "Bayesian Hierarchical Models for Quantitative Estimates for Performance Metrics Applied to Saddle Search Algorithms"
+    authors:
+      - family-names: "Goswami"
+        given-names: "Rohit"
+    journal: "AIP Advances"
+    year: 2025
+    doi: "10.1063/5.0283639"

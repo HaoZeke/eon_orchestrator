@@ -1,3 +1,304 @@
 #+title: NEB Orchestrator
+#+date: 2026-03-13
+#+options: toc:2 num:t
 
-Modular Snakemake workflow for automated NEB calculations with ML potentials.
+#+macro: workflow NEB Orchestrator
+#+macro: version 0.1.0
+
+[[https://github.com/HaoZeke/eon_orchestrator/actions/workflows/ci.yml][https://github.com/HaoZeke/eon_orchestrator/actions/workflows/ci.yml/badge.svg]]
+[[https://opensource.org/licenses/MIT][https://img.shields.io/badge/License-MIT-yellow.svg]]
+
+* Overview
+
+{{workflow}} is a modular Snakemake workflow for automated Nudged Elastic Band (NEB)
+calculations using eOn with machine learning potentials (PET-MAD/uPET).
+
+The workflow orchestrates the complete NEB pipeline:
+1. Automatic ML potential retrieval from HuggingFace
+2. Endpoint preparation with IRA alignment and minimization
+3. CI-NEB optimization with energy-weighted springs and MMF refinement
+4. Publication-quality visualization (1D profiles, 2D landscapes)
+
+** Key Features
+
+- *Modular Design*: Each workflow stage is a separate, reusable rule module
+- *Automated Dependencies*: pixi environments for reproducibility
+- *ML-Powered*: Uses PET-MAD/uPET machine learning potentials
+- *Production-Ready*: Tested on molecular isomerization reactions
+- *Extensible*: Easy to add new systems or modify parameters
+
+** System Applicability
+
+This workflow is optimized for =gas-phase molecular systems=:
+- Small to medium organic molecules (5-50 atoms)
+- Single or multiple bond breaking/forming reactions
+- Isomerization and proton transfer reactions
+
+*Note*: Surface reactions, condensed phase, or enzymatic systems require
+modifications to cell parameters and boundary conditions.
+
+* Installation
+
+** Requirements
+
+- Python 3.11+
+- Snakemake 9.0+
+- eOn client (for NEB calculations)
+- CUDA-capable GPU (recommended) or CPU
+
+** Quick Install
+
+#+begin_src bash
+# Clone the repository
+git clone https://github.com/HaoZeke/eon_orchestrator.git
+cd eon_orchestrator
+
+# Install with pixi (manages all dependencies)
+pixi install -e eon
+
+# Verify
+pixi run validate
+#+end_src
+
+* Usage
+
+** Basic Workflow
+
+#+begin_src bash
+# 1. Copy and edit configuration
+cp config/config.yaml my_config.yaml
+# Edit my_config.yaml with your system paths
+
+# 2. Run the complete workflow
+pixi run -e eon -- snakemake --configfile my_config.yaml -c4
+
+# 3. Check results
+ls results/plots/*/
+#+end_src
+
+** Configuration
+
+Edit =config/config.yaml= to define:
+
+1. *Systems*: Reactant and product .con file paths
+2. *Model*: PET-MAD version (default: v1.5.0)
+3. *Compute*: Device (cuda/cpu)
+4. *NEB Parameters*: Images, convergence, springs
+
+Example minimal config:
+
+#+begin_src yaml
+systems:
+  hcn_isom:
+    reactant: examples/hcn_isom/hcn.con  # Update to your reactant .con file
+    product: examples/hcn_isom/hnc.con    # Update to your product .con file
+    use_ira: true
+
+model:
+  name: pet-mad-xs-v1.5.0
+  version: v1.5.0
+
+compute:
+  device: cuda
+#+end_src
+
+** Workflow Targets
+
+#+begin_src bash
+# Dry run (validate DAG)
+snakemake -n --configfile my_config.yaml
+
+# Run specific system
+snakemake prepare_endpoints --wildcards system=hcn_isom --configfile my_config.yaml
+
+# Run NEB only
+snakemake run_neb_for_system --wildcards system=hcn_isom --configfile my_config.yaml
+
+# Generate plots only
+snakemake visualize_for_system --wildcards system=hcn_isom --configfile my_config.yaml
+
+# Clean outputs
+snakemake clean --configfile my_config.yaml
+#+end_src
+
+* Quick Validation
+
+To quickly validate your installation, run the HCN isomerization example:
+
+#+begin_src bash
+# From the eon_orchestrator root directory
+snakemake --configfile examples/hcn_isom/config.yaml -n
+#+end_src
+
+This dry-run should show a DAG with ~10 jobs including:
+- =get_model=: Download PET-MAD model
+- =align_endpoints=: IRA alignment for reactant and product
+- =minimize_endpoints=: Minimize both endpoints
+- =run_neb=: NEB optimization
+- =visualize=: Generate 4 plots (1D path, index, RMSD, 2D landscape)
+
+*Note*: Full execution requires the =eon= pixi environment:
+=pixi run -e eon hcn= runs the HCN example end-to-end.
+
+
+* Documentation
+
+- [[file:docs/orgmode/quickstart.org][Quickstart Guide]] - Get started in 5 minutes
+- [[file:docs/orgmode/tutorials/first-neb.org][Your First NEB Calculation]] - Step-by-step tutorial
+- [[file:docs/orgmode/tutorials/module-usage.org][Using as a Module]] - Integrate into your workflow
+- [[file:docs/orgmode/][Full Documentation]] - Tutorials, reference, and developer notes
+- [[file:config/config.yaml][Configuration Example]] - All parameters with defaults
+
+* Workflow Structure
+
+#+begin_src
+eon_orchestrator/
+├── workflow/
+│   ├── Snakefile              # Main entry point
+│   ├── rules/
+│   │   ├── get_model.smk      # ML potential retrieval
+│   │   ├── align_endpoints.smk # IRA alignment
+│   │   ├── minimize.smk       # Endpoint minimization
+│   │   ├── generate_idpp.smk  # IDPP path (optional)
+│   │   ├── run_neb.smk        # NEB optimization
+│   │   └── visualize.smk      # Plotting
+├── config/
+│   └── config.yaml            # Default configuration
+├── docs/
+│   └── orgmode/               # Documentation
+├── README.org
+└── LICENSE
+#+end_src
+
+* Examples
+
+Two examples are provided, demonstrating different use cases:
+
+** HCN Isomerization (Quick Start)
+
+The =examples/hcn_isom/= example is a simple 3-atom reaction that:
+- Runs in seconds on CPU or GPU
+- Validates basic workflow functionality
+- Shows standard IRA alignment for linear molecules
+- Expected barrier: ~1.8 eV with PET-MAD
+
+Use this to:
+- Test your installation
+- Learn the basic workflow
+- Validate configuration syntax
+
+** S_N2 Reaction
+
+The =examples/sn2_f_ch3f/= example shows a classic backside attack reaction:
+- F- + CH3F -> FCH3 + F- (symmetric, ~20-25 kcal/mol barrier)
+- Demonstrates why IRA alignment matters for complex reactions
+- Shows CH₃ umbrella inversion during reaction
+- Requires proper handling of rotation and translation
+
+For reactions with large rotations, inversions, or complex rearrangements, IRA
+alignment is critical for obtaining correct initial paths. See the S_N2 example
+README for detailed discussion.
+
+
+* Example Results
+
+After running the workflow, outputs include:
+
+** 1D Energy Profile
+
+Energy along the reaction coordinate showing:
+- Reactant and product basins
+- Saddle point (transition state)
+- Energy barrier height
+
+** 2D RMSD Landscape
+
+Projection of the path onto structural coordinates:
+- X-axis: RMSD from reactant
+- Y-axis: RMSD from product
+- Color: Energy
+- Reveals path tortuosity and intermediates
+* Limitations and Caveats
+
+** Permutation Sensitivity
+
+The IRA alignment ensures consistent atom mapping between endpoints, but does
+not guarantee correct permutations along the entire path. For reactions with:
+
+- Multiple equivalent atoms (e.g., H atoms on methyl groups)
+- Soft rotational modes
+- Complex rearrangements (Claisen, pericyclic reactions)
+
+Small permutation errors can lead to qualitatively different saddle points.
+Users should:
+
+1. *Visualize the initial IDPP path*: =ase gui results/idpp/*/path/*.xyz=
+2. *Check for collisions*: Run =snakemake check_path_collisions=
+3. *Compare multiple IRA kmax values* (1.5, 2.0, 3.0) for ambiguous cases
+4. *Validate saddles* with dimer searches when uncertain
+
+See [[file:docs/orgmode/devnotes.org][Developer Notes]] for detailed discussion and the Claisen test case.
+
+** Scope
+
+This workflow focuses on *orchestration of best practices* for NEB calculations.
+Advanced permutation algorithms (substructure matching, CSHDA integration, etc.)
+are active research topics and not included. See examples/wip/claisen/ for
+experimental tools and discussion.
+
+
+* Citing
+
+If you use {{workflow}} in your research, please cite the following software:
+
+* Contributing
+
+Contributions are welcome! See [[file:docs/orgmode/devnotes.org][Developer Notes]] for:
+- Development setup
+- Adding new rule modules
+- Testing guidelines
+- Code style
+
+* License
+
+MIT License - see [[file:LICENSE][LICENSE]] file for details.
+
+* Acknowledgments
+
+- eOn development team (https://github.com/TheochemUI/eOn)
+- PET-MAD authors (https://huggingface.co/lab-cosmo/pet-mad)
+- Snakemake community (https://snakemake.github.io/)
+- rgpycrumbs for alignment and visualization tools
+
+* Contact
+
+- GitHub Issues: https://github.com/HaoZeke/eon_orchestrator/issues
+* Citation
+
+If you use NEB Orchestrator in your research, please cite:
+
+** Software
+
+cite:[goswami2026neborchestrator]
+
+** Methods
+
+When using enhanced CI-NEB: cite:[goswami2026neb]
+
+When using 2D reaction valley projection: cite:[goswami2026valley]
+
+When using GP-accelerated searches: cite:[goswami2025gpr goswami2025pruning]
+
+** BibTeX
+
+#+begin_src bibtex
+@software{neborchestrator,
+  title = {NEB Orchestrator: Automated NEB Workflows with Machine Learning Potentials},
+  author = {Goswami, Rohit},
+  year = {2026},
+  url = {https://github.com/HaoZeke/eon_orchestrator},
+  version = {0.1.0}
+}
+#+end_src
+
+See [[file:docs/orgmode/citation.org][Citation Guide]] for complete citation information.

@@ -1,0 +1,24 @@
+#+title: Sn2 Tutorial
+#+date: 2026-03-14
+
+* Overview
+
+Sn2 example demonstrates IRA alignment value for complex reactions.
+
+* Source
+
+Structures from: Goswami et al., arXiv:2601.12630 (2026)
+
+* Running
+
+#+begin_src bash
+pixi run -e eon sn2
+#+end_src
+
+* IRA Value
+
+This reaction demonstrates why IRA alignment matters for non-trivial atom mapping.
+
+* Next
+
+See [[file:index.org][Tutorial Index]] for other examples.

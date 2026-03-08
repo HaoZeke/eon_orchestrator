@@ -1,0 +1,80 @@
+#+title: Quickstart Guide
+#+date: 2026-03-14
+
+* Prerequisites
+
+1. pixi installed (https://pixi.sh)
+2. Git
+
+* Installation
+
+#+begin_src bash
+# Clone repository
+git clone https://github.com/HaoZeke/eon_orchestrator.git
+cd eon_orchestrator
+
+# Install dependencies (includes eOn)
+pixi install -e eon
+#+end_src
+
+* Quick Validation
+
+Test workflow without running NEB (no eOn client needed):
+
+#+begin_src bash
+pixi run validate
+#+end_src
+
+Expected: Shows DAG with ~10 jobs
+
+* Run Your First NEB
+
+#+begin_src bash
+# HCN isomerization (3 atoms, ~2 min)
+pixi run -e eon hcn
+
+# Check results
+cat results/neb/hcn_isom/results.dat
+ls -lh results/plots/hcn_isom/
+#+end_src
+
+* Available Examples
+
+| Command | System | Atoms | Time |
+|---------+--------+-------+------|
+| =pixi run -e eon hcn= | HCN → HNC | 3 | 2 min |
+| =pixi run -e eon sn2= | F⁻ + CH₃F | 6 | 3 min |
+| =pixi run -e eon vinyl-alcohol= | Enol → Keto | 8 | 5 min |
+| =pixi run -e eon diels-alder= | Diels-Alder | 16 | 10 min |
+
+* Your Own System
+
+1. Copy example config:
+#+begin_src bash
+cp examples/hcn_isom/config.yaml my_system.yaml
+#+end_src
+
+2. Edit paths to your structures:
+#+begin_src yaml
+systems:
+  my_reaction:
+    reactant: /path/to/reactant.con
+    product: /path/to/product.con
+    use_ira: true
+#+end_src
+
+3. Run:
+#+begin_src bash
+snakemake --configfile my_system.yaml -c4 --use-conda
+#+end_src
+
+* Next Steps
+
+- [[file:tutorials/hcn.org][HCN Tutorial]] - Detailed walkthrough
+- [[file:parameter_guide.org][Parameter Guide]] - Choosing NEB parameters
+- [[file:devnotes.org][Developer Notes]] - Extending the workflow
+
+* Citation
+
+R. Goswami, M. Gunde, and H. Jónsson, arXiv:2601.12630 (2026).
+doi: [[https://doi.org/10.48550/arXiv.2601.12630][10.48550/arXiv.2601.12630]]

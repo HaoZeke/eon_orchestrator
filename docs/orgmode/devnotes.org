@@ -1,0 +1,303 @@
+#+title: Developer Notes
+#+date: 2026-03-14
+
+* Extending the Workflow
+
+** Adding New Rules
+
+Rules are in =workflow/rules/*.smk=. Each rule should:
+
+1. Have clear docstring explaining purpose
+2. Use wildcards for system-agnostic operation
+3. Specify inputs/outputs explicitly
+4. Use conda environments for reproducibility
+
+Example rule template:
+
+#+begin_src python
+rule my_new_rule:
+    """
+    Description of what this rule does.
+    
+    Inputs:
+        - input1: Description
+    Outputs:
+        - output1: Description
+    """
+    input:
+        input1=config['paths']['neb'] + '/{system}/input.con',
+    output:
+        output1=config['paths']['neb'] + '/{system}/output.dat',
+    params:
+        # Parameters from config
+        param1=config.get('my_section', {}).get('param1', 'default'),
+    shell:
+        """
+        my_command {input.input1} {output.output1} --param {params.param1}
+        """
+#+end_src
+
+** Rule Categories
+
+- =get_model.smk= - Model retrieval
+- =align_endpoints.smk= - IRA alignment
+- =minimize.smk= - Geometry optimization
+- =generate_idpp.smk= - IDPP path generation
+- =run_neb.smk= - NEB optimization
+- =visualize.smk= - Plotting
+- =validate_path.smk= - Path validation
+
+** Adding to Target Rule
+
+Update =rule all= in =workflow/Snakefile= to include new outputs:
+
+#+begin_src python
+rule all:
+    input:
+        expand(
+            [
+                # Existing outputs...
+                config['paths']['plots'] + '/{system}/my_new_plot.png',
+            ],
+            system=list(config.get('systems', {}).keys())
+        )
+#+end_src
+
+* Modifying Parameters
+
+** Configuration Hierarchy
+
+1. =config/config.yaml= - Global defaults
+2. =examples/*/config.yaml= - Example-specific overrides
+3. Command-line: =--config systems.my_system.param=value=
+
+** Key Parameters
+
+| Section | Parameter | Default | Description |
+|---------+-----------+---------+-------------|
+| =neb.optimization= | =images= | 18 | Number of NEB images |
+| =neb.optimization= | =converged_force= | 0.0514 | Force tolerance (eV/Å) |
+| =neb.optimization= | =energy_weighted= | true | Energy-weighted springs |
+| =alignment= | =kmax= | 1.8 | IRA matching cutoff (Å⁻¹) |
+| =plotting.figure= | =zoom_ratio= | 0.3 | Structure inset zoom |
+| =plotting= | =ira_kmax= | 14 | RMSD calculation kmax |
+
+** Testing Parameter Changes
+
+#+begin_src bash
+# Dry-run to check DAG changes
+pixi run validate
+
+# Run single system
+snakemake --configfile my_config.yaml -c4 --use-conda
+
+# Force re-run with new params
+snakemake --configfile my_config.yaml -c4 --use-conda --rerun-incomplete
+#+end_src
+
+* Using as Snakemake Module
+
+** Basic Module Usage
+
+In your workflow's =Snakefile=:
+
+#+begin_src python
+# Import NEB Orchestrator as module
+module neb_orchestrator:
+    snakefile: "path/to/eon_orchestrator/workflow/Snakefile"
+    config: config["neb"]  # Your NEB config section
+
+# Use rules from module
+use rule * from neb_orchestrator as neb_*
+#+end_src
+
+** Your Configuration
+
+In your =config.yaml=:
+
+#+begin_src yaml
+neb:
+  systems:
+    my_reaction:
+      reactant: /path/to/reactant.con
+      product: /path/to/product.con
+      use_ira: true
+  
+  model:
+    name: pet-mad-xs-v1.5.0
+    version: v1.5.0
+  
+  compute:
+    device: cpu  # or cuda
+  
+  neb:
+    optimization:
+      images: 18
+      converged_force: 0.0514221
+#+end_src
+
+** Chaining with Your Rules
+
+#+begin_src python
+# Your workflow
+rule all:
+    input:
+        "analysis/my_reaction/summary.txt"
+
+# Run NEB first
+rule run_neb:
+    input:
+        neb_results=rules.neb_run_neb.output.results_dat
+    output:
+        "analysis/{system}/summary.txt"
+    script:
+        "scripts/analyze_neb.py"
+#+end_src
+
+** Overriding Specific Rules
+
+#+begin_src python
+# Use your custom visualization instead
+use rule run_neb from neb_orchestrator as neb_run_neb
+use rule * from neb_orchestrator as neb_*  # Other rules
+
+rule my_custom_viz:
+    input:
+        neb_run_neb.output.results_dat
+    output:
+        "plots/{system}/custom.png"
+    script:
+        "scripts/my_viz.py"
+#+end_src
+
+* Directory Structure
+
+#+begin_src
+workflow/
+├── Snakefile              # Main entry point, rule all
+├── rules/
+│   ├── get_model.smk      # Model retrieval
+│   ├── align_endpoints.smk # IRA alignment
+│   ├── minimize.smk       # Endpoint minimization
+│   ├── generate_idpp.smk  # IDPP path (optional)
+│   ├── run_neb.smk        # NEB optimization
+│   ├── visualize.smk      # Plotting
+│   └── validate_path.smk  # Path validation
+└── envs/
+    ├── model.yaml         # Model retrieval env
+    ├── alignment.yaml     # IRA alignment env
+    ├── minimize.yaml      # Minimization env
+    ├── idpp.yaml          # IDPP env
+    ├── neb.yaml           # NEB optimization env
+    └── visualize.yaml     # Plotting env
+#+end_src
+
+* Conda Environments
+
+Each rule has its own environment in =workflow/envs/*.yaml=. Environments are:
+
+- Minimal (only required dependencies)
+- Pinned to specific versions for reproducibility
+- Automatically managed by Snakemake =--use-conda=
+
+** Adding Dependencies
+
+Edit the appropriate =workflow/envs/*.yaml=:
+
+#+begin_src yaml
+name: neb-optimization
+channels:
+  - conda-forge
+  - metatensor
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - eonclient>=0.1.0
+      - your-new-package>=1.0.0
+#+end_src
+
+* Debugging
+
+** Common Issues
+
+| Problem | Solution |
+|---------+----------|
+| =MissingInputException= | Check file paths in config |
+| =RuleException= | Check rule docstring for expected inputs |
+| Conda env fails | Run =snakemake --conda-create-envs-only= first |
+| Plotting fails | Check =RGPYCRUMBS_AUTO_DEPS=1= is set |
+
+** Verbose Output
+
+#+begin_src bash
+# Show full traceback
+snakemake --configfile config.yaml -c4 --use-conda --verbose
+
+# Show conda env creation
+snakemake --conda-create-envs-only --use-conda
+
+# Dry-run with reasons
+snakemake -n --configfile config.yaml --reason
+#+end_src
+
+* Testing
+
+** Validate Configuration
+
+#+begin_src bash
+# Check YAML syntax
+pixi run lint
+
+# Validate workflow DAG
+pixi run validate
+#+end_src
+
+** Test Single System
+
+#+begin_src bash
+# Run HCN example (fastest)
+pixi run -e eon hcn
+
+# Check outputs
+ls results/neb/hcn_isom/
+cat results/neb/hcn_isom/results.dat
+#+end_src
+
+* Citation
+
+When extending or using this workflow:
+
+#+begin_quote
+R. Goswami, M. Gunde, and H. Jónsson, "Enhanced climbing image nudged elastic band method with hessian eigenmode alignment," arXiv:2601.12630, Jan. 2026. doi: [[https://doi.org/10.48550/arXiv.2601.12630][10.48550/arXiv.2601.12630]].
+#+end_quote
+
+* Adding New Systems
+
+** Quick Checklist
+
+1. Prepare reactant/product structures (same atom order!)
+2. Copy example config: =cp examples/hcn_isom/config.yaml my_system.yaml=
+3. Edit paths and system name
+4. Validate: =snakemake --configfile my_system.yaml -n=
+5. Run: =snakemake --configfile my_system.yaml -c4 --use-conda=
+
+** Common Mistakes
+
+| Mistake | Symptom | Fix |
+|---------+---------+-----|
+| Wrong atom order | Barrier >5 eV | Reorder atoms to match |
+| Missing box | eOn error | Add 25 Å cubic box |
+| Too few images | NEB doesn't converge | Use 18-24 for medium systems |
+| kmax too low | IRA alignment fails | Try kmax=2.5-3.0 |
+
+** System Size Guidelines
+
+| Atoms | Images | kmax | Time (CPU) |
+|-------+--------+------+------------|
+| 3-5 | 12-16 | 1.8 | 2-5 min |
+| 6-10 | 18-20 | 2.0 | 5-10 min |
+| 11-20 | 20-24 | 2.5 | 10-20 min |
+| 20+ | 24-30 | 3.0 | 20+ min |
+
+See [[file:tutorials/adding_systems.org][Adding Your Own System]] for detailed guide.

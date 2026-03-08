@@ -1,0 +1,15 @@
+#+title: Used By
+#+date: 2026-03-13
+
+* Related Software
+
+NEB Orchestrator builds on the following software:
+
+- [[https://eondocs.org][eOn]] - Nudged Elastic Band engine
+- [[https://snakemake.github.io][Snakemake]] - Workflow management system
+- [[https://rgpycrumbs.rgoswami.me][rgpycrumbs]] - Alignment and visualization tools
+- [[https://huggingface.co/lab-cosmo/pet-mad][PET-MAD]] - Machine learning potential
+
+* Citation
+
+If you use NEB Orchestrator in your research, please cite the software. See CITATION.cff for proper citation format.

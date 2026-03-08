@@ -1,0 +1,55 @@
+#+title: HCN Isomerization Tutorial
+#+date: 2026-03-14
+
+* Overview
+
+HCN → HNC isomerization is the simplest NEB example (3 atoms). Use this to validate your installation.
+
+* Reaction
+
+Linear hydrogen cyanide isomerizes to hydrogen isocyanide:
+
+HCN (reactant) → [TS] → HNC (product)
+
+Expected barrier: ~1.8 eV with PET-MAD-XS v1.5.0
+
+* Running the Example
+
+#+begin_src bash
+cd eon_orchestrator
+
+# Dry-run (validates workflow, no eOn needed)
+pixi run validate
+
+# Full calculation (requires eOn)
+pixi run -e eon hcn
+#+end_src
+
+* Expected Outputs
+
+** NEB Results
+
+#+begin_src bash
+cat results/neb/hcn_isom/results.dat
+#+end_src
+
+Should show:
+- 18-20 images
+- Barrier around image 9-10 (climbing image)
+- Energy ~0.07-0.09 eV above reactant
+
+** Plots
+
+- =results/plots/hcn_isom/1D_path.png= - Energy profile
+- =results/plots/hcn_isom/1D_index.png= - Energy vs image index
+
+* IRA Alignment
+
+For this simple linear isomerization, IRA provides minimal benefit. The real value is shown in more complex examples (SN2, Diels-Alder).
+
+* Next Steps
+
+After validating with HCN:
+1. Try [[file:sn2.org][SN2 reaction]] (6 atoms, backside attack)
+2. Try [[file:vinyl_alcohol.org][Vinyl alcohol]] (8 atoms, H-transfer)
+3. Try [[file:diels_alder.org][Diels-Alder]] (16 atoms, ring closure)

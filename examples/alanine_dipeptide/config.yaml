@@ -1,10 +1,10 @@
-# Alanine Dipeptide: C7eq -> C7ax Conformational Change
-# Phi/Psi angle rotation in small peptide
+# Alanine Dipeptide: C7eq -> C5 (beta) Conformational Change
+# Phi/Psi rotation from folded to extended conformation
 
 systems:
   alanine_dipeptide:
     reactant: examples/alanine_dipeptide/c7eq.xyz
-    product: examples/alanine_dipeptide/c7ax.xyz
+    product: examples/alanine_dipeptide/c5.xyz
     use_ira: true
 
 model:
@@ -26,8 +26,8 @@ neb:
     max_move: 0.1
 
   optimization:
-    images: 19
-    max_iterations: 1000
+    images: 21
+    max_iterations: 2000
     converged_force: 0.0514221
     opt_method: lbfgs
     max_move: 0.1
@@ -44,7 +44,7 @@ neb:
 plotting:
   plot_structures: true
   facecolor: white
-  title: "Alanine Dipeptide: C7eq to C7ax"
+  title: "Alanine Dipeptide: C7eq to C5"
   figure:
     figsize: [5.3, 5.3]
     dpi: 300

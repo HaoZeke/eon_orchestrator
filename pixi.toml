@@ -5,7 +5,7 @@ platforms = ["linux-64"]
 
 # Default environment tasks (validation, plotting - no eonclient needed)
 [tasks]
-validate = "snakemake --configfile config/config.yaml -n"
+validate = "snakemake -n"
 plot-hcn = "python -m rgpycrumbs.cli eon plt-neb --con-file results/neb/hcn_isom/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
 plot-sn2 = "python -m rgpycrumbs.cli eon plt-neb --con-file results/neb/sn2_f_ch3f/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
 plot-diels = "python -m rgpycrumbs.cli eon plt-neb --con-file results/neb/diels_alder/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"

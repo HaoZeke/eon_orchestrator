@@ -110,7 +110,7 @@ plotting:
   figure:
     figsize: [5.3, 5.3]          # Width, height in inches
     dpi: 300                  # Output resolution
-    zoom_ratio: 0.03           # Zoom factor for structure overlays
+    zoom_ratio: 0.4            # Zoom factor for structure overlays
 
   fonts:
     base: 12                  # Base font size

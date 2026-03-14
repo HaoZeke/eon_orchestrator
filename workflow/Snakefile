@@ -14,7 +14,7 @@ Workflow Stages:
 Usage
 -------
 Standalone:
-    snakemake -c4 --use-conda --configfile config/config.yaml
+    snakemake -c4 --configfile examples/hcn_isom/config.yaml
 
 As a module in your workflow:
     # In your Snakefile:
@@ -26,6 +26,9 @@ As a module in your workflow:
 
 For more information, see README.org and config/config.yaml.
 """
+
+# Load default configuration (example configs override via --configfile)
+configfile: "config/config.yaml"
 
 # Include all rule modules
 include: "rules/get_model.smk"

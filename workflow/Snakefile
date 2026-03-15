@@ -133,22 +133,19 @@ rule visualize_for_system:
 ARCHIVE = "neb_orchestrator_data.tar.xz"
 
 rule archive:
-    """Create Materials Cloud Archive tarball from the results folder."""
-    input:
-        expand(
-            [
-                config['paths']['neb'] + '/{system}/neb.con',
-                config['paths']['plots'] + '/{system}/1D_path.png',
-            ],
-            system=list(config.get('systems', {}).keys()) if isinstance(config.get('systems'), dict) else []
-        ),
+    """Create Materials Cloud Archive tarball from the results folder.
+
+    Run each example first (pixi run -e eon hcn, sn2, etc.), then:
+        pixi run -e eon archive
+    """
     output: ARCHIVE
     shell:
         """
         pandoc -f org -t gfm docs/orgmode/archive_readme.org -o README.md &&
         tar -cJf {output} \
+            --exclude='.snakemake' \
             results/ \
-            config/config.yaml \
+            config/ \
             examples/*/config.yaml \
             README.org \
             README.md &&

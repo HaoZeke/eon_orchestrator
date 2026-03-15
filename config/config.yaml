@@ -9,20 +9,13 @@
 # Define your chemical systems here. Each system needs reactant and product
 # structures in .con format (eOn configuration files).
 
-systems:
-  # Example: HCN isomerization
-  hcn_isom:
-    reactant: examples/hcn_isom/hcn.con
-    product: examples/hcn_isom/hnc.con
-    use_ira: true  # Enable Iterative Rotational Alignment
-    # Optional: saddle point structure for 2D visualization
-    # saddle: /path/to/saddle.con
-
-  # Add more systems as needed
-  # your_system:
-  #   reactant: /path/to/reactant.con
-  #   product: /path/to/product.con
-  #   use_ira: true
+systems: {}
+  # Define your systems here or in a per-example config file.
+  # Example:
+  #   hcn_isom:
+  #     reactant: examples/hcn_isom/hcn.con
+  #     product: examples/hcn_isom/hnc.con
+  #     use_ira: true
 
 
 # =============================================================================

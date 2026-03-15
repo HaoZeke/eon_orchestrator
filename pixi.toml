@@ -20,7 +20,7 @@ sn2 = "snakemake --configfile examples/sn2_f_ch3f/config.yaml -c4"
 diels-alder = "snakemake --configfile examples/diels_alder/config.yaml -c4"
 vinyl-alcohol = "snakemake --configfile examples/vinyl_alcohol/config.yaml -c4"
 alanine = "snakemake --configfile examples/alanine_dipeptide/config.yaml -c4"
-archive = "snakemake archive -c4"
+archive = "snakemake -c4 archive"
 
 [dependencies]
 python = ">=3.11,<3.13"

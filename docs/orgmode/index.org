@@ -1,14 +1,32 @@
-#+title: NEB Orchestrator Documentation
-#+date: 2026-03-14
+#+TITLE: NEB Orchestrator
+#+OPTIONS: toc:nil todo:nil num:nil author:nil title:nil ^:nil
 
-* NEB Orchestrator
+#+begin_export rst
+================
+NEB Orchestrator
+================
 
-Modular Snakemake workflow for automated Nudged Elastic Band (NEB) calculations using eOn with machine learning potentials (PET-MAD-XS).
+:Author: `Rohit Goswami <https://rgoswami.me>`_
+:Version: 0.1.0
+:License: MIT
+
+.. container:: badges
+
+   .. image:: https://github.com/HaoZeke/eon_orchestrator/actions/workflows/ci.yml/badge.svg
+      :target: https://github.com/HaoZeke/eon_orchestrator/actions/workflows/ci.yml
+      :alt: CI Status
+
+   .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+      :target: https://opensource.org/licenses/MIT
+      :alt: License: MIT
+#+end_export
+
+Modular Snakemake workflow for automated Nudged Elastic Band (NEB) calculations
+using eOn with machine learning potentials (PET-MAD/uPET).
 
 * Quick Start
 
 #+begin_src bash
-# Clone and install
 git clone https://github.com/HaoZeke/eon_orchestrator.git
 cd eon_orchestrator
 pixi install -e eon
@@ -20,37 +38,50 @@ pixi run validate
 pixi run -e eon hcn
 #+end_src
 
-* Examples
+* Features
 
-Four examples demonstrating increasing complexity:
+- Each workflow stage is a separate, reusable Snakemake rule module
+- pixi manages all dependencies for reproducibility
+- PET-MAD/uPET machine learning potentials from HuggingFace
+- 1D energy profiles and 2D RMSD landscape visualization
+- Tested on five example systems (3 to 22 atoms)
 
-| Example | Atoms | Reaction | IRA Value | Time |
-|---------+-------+----------+-----------+------|
-| [[file:tutorials/hcn.org][HCN Isomerization]] | 3 | Linear H-transfer | Minor | 2 min |
-| [[file:tutorials/sn2.org][S_N2 Reaction]] | 6 | Backside attack | Moderate | 3 min |
-| [[file:tutorials/vinyl_alcohol.org][Vinyl Alcohol]] | 8 | Tautomerization | High | 5 min |
-| [[file:tutorials/diels_alder.org][Diels-Alder]] | 16 | Ring closure | Critical | 10 min |
+* System Applicability
 
-All structures from: Goswami et al., arXiv:2601.12630 (2026)
+Optimized for gas-phase molecular systems (5-50 atoms):
+single or multiple bond breaking/forming, isomerization,
+proton transfer, and conformational changes.
 
-* Documentation Index
+Surface reactions, condensed phase, or enzymatic systems require
+modifications to cell parameters and boundary conditions.
 
-- [[file:quickstart.org][Quickstart]] - 5-minute setup guide
-- [[file:tutorials/][Tutorials]] - Step-by-step examples
-- [[file:reference/][Reference]] - Configuration parameters
-- [[file:devnotes.org][Developer Notes]] - Extending the workflow
-- [[file:parameter_guide.org][Parameter Guide]] - Choosing NEB parameters
+#+begin_export rst
+.. toctree::
+   :maxdepth: 2
+   :caption: Getting Started
 
-* Citation
+   quickstart
+   tutorials/index
 
-If you use this workflow, please cite:
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
 
-#+begin_quote
-R. Goswami, M. Gunde, and H. Jónsson, "Enhanced climbing image nudged elastic band method with hessian eigenmode alignment," arXiv:2601.12630, Jan. 2026. doi: [[https://doi.org/10.48550/arXiv.2601.12630][10.48550/arXiv.2601.12630]].
-#+end_quote
+   parameter_guide
+   reference/configuration
 
-* Known Limitations
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer Guide
 
-- 2D RMSD landscape plotting disabled (rgpycrumbs API changed)
-- 1D energy profiles work correctly
-- Requires eOn client for full execution (validation works without)
+   contributing/index
+   devnotes
+   changelog
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Community
+
+   citation
+   used_by
+#+end_export

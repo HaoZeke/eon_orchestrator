@@ -1,40 +1,32 @@
-;;; export.el --- Export orgmode docs to RST for Sphinx -*- lexical-binding: t; -*-
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
 
-;;; Commentary:
-;; Export NEB Orchestrator orgmode documentation to RST for Sphinx build.
-;; Run with: emacs --batch --load export.el -f neb-export-all
-
-;;; Code:
+(unless (package-installed-p 'ox-rst)
+  (package-refresh-contents)
+  (package-install 'ox-rst))
 
 (require 'ox-rst)
+(require 'ox-publish)
 
-(setq neb-org-dir (file-name-directory (buffer-file-name)))
-(setq neb-rst-dir (expand-file-name "source" neb-org-dir))
+(setq org-confirm-babel-evaluate nil)
+(setq org-export-with-broken-links t)
 
-(defun neb-export-file (org-file rst-file)
-  "Export ORG-FILE to RST-FILE."
-  (find-file org-file)
-  (org-rst-export-to-rst nil nil nil nil nil t)
-  (let ((rst-output (concat (file-name-sans-extension org-file) ".rst")))
-    (when (file-exists-p rst-output)
-      (copy-file rst-output rst-file t)
-      (delete-file rst-output)))
-  (kill-buffer))
+(setq org-publish-project-alist
+      '(("sphinx-rst"
+         :base-directory "./orgmode/"
+         :base-extension "org"
+         :publishing-directory "./source/"
+         :publishing-function org-rst-publish-to-rst
+         :recursive t
+         :headline-levels 4
+         :with-toc nil)
+        ("sphinx-images"
+         :base-directory "./orgmode/"
+         :base-extension "svg\\|png\\|jpg"
+         :publishing-directory "./source/"
+         :publishing-function org-publish-attachment
+         :recursive t)
+        ("sphinx" :components ("sphinx-rst" "sphinx-images"))))
 
-(defun neb-export-all ()
-  "Export all orgmode files to RST."
-  (interactive)
-  (let ((files '(
-                 ("orgmode/index.org" "source/index.rst")
-                 ("orgmode/quickstart.org" "source/quickstart.rst")
-                 ("orgmode/devnotes.org" "source/devnotes.rst")
-                 )))
-    (dolist (file-pair files)
-      (let ((org-file (expand-file-name (car file-pair) neb-org-dir))
-            (rst-file (expand-file-name (cadr file-pair) neb-org-dir)))
-        (when (file-exists-p org-file)
-          (message "Exporting %s to %s" org-file rst-file)
-          (neb-export-file org-file rst-file))))))
-
-(provide 'export)
-;;; export.el ends here
+(org-publish "sphinx" t)

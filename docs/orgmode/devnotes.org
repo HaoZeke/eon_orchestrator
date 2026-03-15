@@ -89,8 +89,7 @@ rule all:
 pixi run validate
 
 # Run single system
-snakemake --configfile my_config.yaml -c4 --use-conda
-
+snakemake --configfile my_config.yaml -c4
 # Force re-run with new params
 snakemake --configfile my_config.yaml -c4 --use-conda --rerun-incomplete
 #+end_src
@@ -172,7 +171,7 @@ rule my_custom_viz:
 
 * Directory Structure
 
-#+begin_src
+#+begin_src text
 workflow/
 ├── Snakefile              # Main entry point, rule all
 ├── rules/
@@ -235,8 +234,7 @@ dependencies:
 snakemake --configfile config.yaml -c4 --use-conda --verbose
 
 # Show conda env creation
-snakemake --conda-create-envs-only --use-conda
-
+snakemake --conda-create-envs-only
 # Dry-run with reasons
 snakemake -n --configfile config.yaml --reason
 #+end_src

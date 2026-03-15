@@ -17,7 +17,7 @@ This guide shows how to run NEB calculations for your own molecular system.
 
 Structures must be in eOn .con format or XYZ format:
 
-#+begin_src
+#+begin_src text
 # XYZ format example
 8
 Vinyl alcohol reactant
@@ -36,13 +36,13 @@ H      -2.154321     0.345678     0.000123
 *Critical*: Reactant and product must have the same atom order.
 
 Correct (H atom maps to H atom):
-#+begin_src
+#+begin_src text
 Reactant: C1 C2 O3 H4 H5 H6 H7 H8
 Product:  C1 C2 O3 H4 H5 H6 H7 H8
 #+end_src
 
 Incorrect (atoms scrambled):
-#+begin_src
+#+begin_src text
 Reactant: C1 C2 O3 H4 H5 H6 H7 H8
 Product:  C2 C1 O3 H5 H4 H8 H7 H6  # Wrong!
 #+end_src
@@ -50,7 +50,7 @@ Product:  C2 C1 O3 H5 H4 H8 H7 H6  # Wrong!
 ** Box Size
 
 For gas-phase molecules, use a 25 Å cubic box:
-#+begin_src
+#+begin_src text
 25.000000   25.000000   25.000000 
 90.000000   90.000000   90.000000
 #+end_src
@@ -103,8 +103,7 @@ Expected output: Shows ~10 jobs in DAG
 
 #+begin_src bash
 # Full calculation (requires eOn)
-snakemake --configfile my_system.yaml -c4 --use-conda
-#+end_src
+snakemake --configfile my_system.yaml -c4#+end_src
 
 * Step 5: Check Results
 
@@ -191,8 +190,7 @@ neb:
 ** 3. Run
 
 #+begin_src bash
-snakemake --configfile formaldehyde/config.yaml -c4 --use-conda
-#+end_src
+snakemake --configfile formaldehyde/config.yaml -c4#+end_src
 
 * Next Steps
 

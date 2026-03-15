@@ -1,16 +1,21 @@
-#+title: Tutorial Index
-#+date: 2026-03-14
-
-* NEB Orchestrator Tutorials
+#+TITLE: Tutorials
+#+OPTIONS: toc:nil num:nil ^:nil
 
 Step-by-step guides for running NEB calculations.
 
-* Quick Start
+Start with [[file:hcn.org][HCN Isomerization]] to validate your installation,
+then work through increasing complexity.
 
-New to NEB Orchestrator? Start here:
+#+begin_export rst
+.. toctree::
+   :maxdepth: 1
 
-1. [[file:../quickstart.org][Quickstart Guide]] - Installation and first run (5 min)
-2. [[file:hcn.org][HCN Isomerization]] - Validate installation (3 atoms, 2 min)
+   hcn
+   sn2
+   vinyl_alcohol
+   diels_alder
+   adding_systems
+#+end_export
 
 * Examples by Complexity
 

@@ -13,9 +13,6 @@ Thank you for your interest in contributing to NEB Orchestrator!
    :maxdepth: 2
 
    code_of_conduct
-   development
-   testing
-   documentation
 #+END_EXPORT
 
 * Getting Started
@@ -83,7 +80,7 @@ Enhancement suggestions are welcome! Please provide:
 
 Follow [[https://www.conventionalcommits.org/][Conventional Commits]]:
 
-#+begin_src
+#+begin_src text
 feat: add DFT validation step
 fix: correct force convergence threshold
 docs: update configuration reference

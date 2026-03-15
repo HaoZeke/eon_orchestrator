@@ -65,8 +65,7 @@ systems:
 
 3. Run:
 #+begin_src bash
-snakemake --configfile my_system.yaml -c4 --use-conda
-#+end_src
+snakemake --configfile my_system.yaml -c4#+end_src
 
 * Next Steps
 

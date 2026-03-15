@@ -247,6 +247,35 @@ are active research topics and not included. See examples/wip/claisen/ for
 experimental tools and discussion.
 
 
+* Data Archive
+
+A complete data archive is available on the Materials Cloud Archive:
+
+#+begin_quote
+DOI: PLACEHOLDER (will be updated after upload)
+#+end_quote
+
+** Generating the archive
+
+#+begin_src bash
+pixi run -e eon archive
+# produces neb_orchestrator_data.tar.xz (~25 MB)
+#+end_src
+
+** Rehydrating
+
+To restore all computed results without re-running:
+
+#+begin_src bash
+git clone https://github.com/HaoZeke/eon_orchestrator
+cd eon_orchestrator
+tar -xJf neb_orchestrator_data.tar.xz
+#+end_src
+
+This recreates the =results/= directory with endpoints, NEB data, iteration
+traces, plots, model, and cache. All Snakemake targets will show as up-to-date.
+See =docs/orgmode/archive_readme.org= for the full data layout and format descriptions.
+
 * Citing
 
 If you use {{workflow}} in your research, please cite the following software:

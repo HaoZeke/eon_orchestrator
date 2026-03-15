@@ -146,8 +146,6 @@ rule archive:
     shell:
         """
         tar -cJf {output} \
-            --exclude='results/cache' \
-            --exclude='results/models' \
             results/ \
             config/config.yaml \
             examples/*/config.yaml \

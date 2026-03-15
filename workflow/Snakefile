@@ -145,11 +145,14 @@ rule archive:
     output: ARCHIVE
     shell:
         """
+        pandoc -f org -t gfm docs/orgmode/archive_readme.org -o README.md &&
         tar -cJf {output} \
             results/ \
             config/config.yaml \
             examples/*/config.yaml \
-            README.org
+            README.org \
+            README.md &&
+        trash README.md
         """
 
 

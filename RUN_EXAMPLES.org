@@ -62,7 +62,7 @@ If you prefer to run the plot command manually:
 
 #+begin_src bash
 cd results/neb/hcn_isom/
-python -m rgpycrumbs.cli eon plt-neb \
+python -m chemparseplot.scripts.plt_neb \
   --con-file neb.con \
   --plot-type landscape \
   --project-path \

@@ -127,6 +127,35 @@ rule visualize_for_system:
 
 
 # =============================================================================
+# Materials Cloud Archive
+# =============================================================================
+
+ARCHIVE = "neb_orchestrator_data.tar.xz"
+
+rule archive:
+    """Create Materials Cloud Archive tarball from the results folder."""
+    input:
+        expand(
+            [
+                config['paths']['neb'] + '/{system}/neb.con',
+                config['paths']['plots'] + '/{system}/1D_path.png',
+            ],
+            system=list(config.get('systems', {}).keys()) if isinstance(config.get('systems'), dict) else []
+        ),
+    output: ARCHIVE
+    shell:
+        """
+        tar -cJf {output} \
+            --exclude='results/cache' \
+            --exclude='results/models' \
+            results/ \
+            config/config.yaml \
+            examples/*/config.yaml \
+            README.org
+        """
+
+
+# =============================================================================
 # Utility Rules
 # =============================================================================
 

@@ -97,6 +97,10 @@ temp/
 my_*.yaml
 local_config.yaml
 
+# Archives
+*.tar.xz
+*.tar.gz
+
 # Claude Code
 .claude/
 CLAUDE.md

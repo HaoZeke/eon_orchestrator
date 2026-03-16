@@ -6,10 +6,10 @@ platforms = ["linux-64"]
 # Default environment tasks (validation, plotting - no eonclient needed)
 [tasks]
 validate = "snakemake -n"
-plot-hcn = "python -m chemparseplot.scripts.plt_neb --con-file results/neb/hcn_isom/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
-plot-sn2 = "python -m chemparseplot.scripts.plt_neb --con-file results/neb/sn2_f_ch3f/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
-plot-diels = "python -m chemparseplot.scripts.plt_neb --con-file results/neb/diels_alder/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
-plot-vinyl = "python -m chemparseplot.scripts.plt_neb --con-file results/neb/vinyl_alcohol/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
+plot-hcn = "python -m rgpycrumbs.cli eon plt-neb --con-file results/neb/hcn_isom/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
+plot-sn2 = "python -m rgpycrumbs.cli eon plt-neb --con-file results/neb/sn2_f_ch3f/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
+plot-diels = "python -m rgpycrumbs.cli eon plt-neb --con-file results/neb/diels_alder/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
+plot-vinyl = "python -m rgpycrumbs.cli eon plt-neb --con-file results/neb/vinyl_alcohol/neb.con --plot-type landscape --project-path --show-pts --landscape-path all --plot-structures crit_points --surface-type grad_imq --ira-kmax 14 --show-legend"
 clean = "rm -rf results/"
 lint = "yamllint config/config.yaml examples/*/config.yaml"
 
@@ -31,9 +31,9 @@ yamllint = "*"
 [pypi-dependencies]
 jax = "*"
 jaxlib = "*"
-chemparseplot = ">=1.4.0"
+chemparseplot = ">=1.4.2"
 h5py = "*"
-rgpycrumbs = ">=1.4.0"
+rgpycrumbs = ">=1.4.1"
 polars = "*"
 adjustText = "*"
 ase = ">=3.24"

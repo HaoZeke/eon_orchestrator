@@ -6,7 +6,7 @@ Generates publication-quality plots:
 1. 1D energy profile (vs path, index, or RMSD)
 2. 2D RMSD landscape showing reactant/product basins and saddle region
 
-Uses `python -m chemparseplot.scripts.plt_neb` with styling options for
+Uses `python -m rgpycrumbs.cli eon plt-neb` with styling options for
 figure customization.
 
 Note: 2D landscape requires IRA alignment with higher kmax (default: 14)
@@ -82,7 +82,7 @@ rule plot_neb_1d_path:
         mkdir -p {params.cache} &&
         ROOT_DIR=$PWD &&
         cd {params.cache} &&
-        python -m chemparseplot.scripts.plt_neb \
+        python -m rgpycrumbs.cli eon plt-neb \
             --con-file "$ROOT_DIR/{input.con}" \
             --output-file "$ROOT_DIR/{output.plot}" \
             --plot-type "profile" \
@@ -132,7 +132,7 @@ rule plot_neb_1d_index:
         mkdir -p {params.cache} &&
         ROOT_DIR=$PWD &&
         cd {params.cache} &&
-        python -m chemparseplot.scripts.plt_neb \
+        python -m rgpycrumbs.cli eon plt-neb \
             --con-file "$ROOT_DIR/{input.con}" \
             --output-file "$ROOT_DIR/{output.plot}" \
             --plot-type "profile" \
@@ -201,7 +201,7 @@ rule plot_neb_2d_rmsd:
         mkdir -p {params.cache} &&
         ROOT_DIR=$PWD &&
         cd {params.cache} &&
-        python -m chemparseplot.scripts.plt_neb \
+        python -m rgpycrumbs.cli eon plt-neb \
             --con-file "$ROOT_DIR/{input.con}" \
             --output-file "$ROOT_DIR/{output.plot}" \
             --plot-type "landscape" \

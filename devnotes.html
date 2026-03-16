@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Developer Notes - NEB Orchestrator documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Changelog" href="changelog.html" /><link rel="prev" title="Code of Conduct" href="contributing/code_of_conduct.html" />
+      <link rel="canonical" href="neb-orchestrator.rgoswami.me/devnotes.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=a318c5d4" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/>
+  <meta property="og:url" content="neb-orchestrator.rgoswami.me/devnotes.html"/>
+  <meta property="og:title" content="Developer Notes"/>
+    <meta name="twitter:card" content="summary"/>
+  <!-- Manual favicon handling with favicon.io -->
+<!-- since sphinx-favicon doesn't work with shibuya -->
+<link rel="icon" type="image/png" sizes="16x16" href="_static/favicons/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="_static/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="_static/favicons/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="_static/favicons/android-chrome-512x512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="_static/favicons/apple-touch-icon.png">
+<link rel="shortcut icon" href="_static/favicons/favicon.ico">
+<link rel="manifest" href="_static/favicons/site.webmanifest">
+<!-- Umami analytics -->
+<script defer src="https://analytics.turtletech.us/script.js" data-website-id="fe91a76b-5f16-4b7b-97cc-d0afe09a8b9a"></script>
+<script>window.umami=window.umami||{track:function(){}};document.addEventListener('click',function(e){var a=e.target.closest('a');if(a&&a.hostname!==location.hostname)umami.track('Outbound Link',{url:a.href})});</script></head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      
+      
+      <strong>NEB Orchestrator</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul>
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-1" aria-controls="nav-children-1">
+            <span>Ecosystem</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul id="nav-children-1" aria-labelledby="nav-trigger-1"><li><a href="https://eondocs.org">
+                <span>eOn</span>
+                <small>Nudged Elastic Band engine</small>
+              </a></li><li><a href="https://huggingface.co/lab-cosmo/pet-mad">
+                <span>PET-MAD</span>
+                <small>Machine learning potential</small>
+              </a></li><li><a href="https://rgpycrumbs.rgoswami.me">
+                <span>rgpycrumbs</span>
+                <small>Alignment and visualization tools</small>
+              </a></li></ul>
+      </li><li class="link">
+          <a href="https://pypi.org/project/eon-orchestrator/">
+            <span>PyPI</span><i class="i-lucide external-link"></i></a>
+        </li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/HaoZeke/eon_orchestrator" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="1"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1 _expand"><a class="reference internal" href="quickstart.html">Quickstart Guide</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="tutorials/index.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/hcn.html">HCN Isomerization Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/sn2.html">Sn2 Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/vinyl_alcohol.html">Vinyl<sub>alcohol</sub>Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/diels_alder.html">Diels<sub>alder</sub>Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/adding_systems.html">Adding Your Own System</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1 _expand"><a class="reference internal" href="parameter_guide.html">Parameter Selection Guide</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="reference/configuration.html">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Developer Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 _expand"><a class="reference internal" href="contributing/index.html">Contributing Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Notes</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1 _expand"><a class="reference internal" href="citation.html">How to Cite NEB Orchestrator</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="used_by.html">Used By</a></li>
+</ul>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#extending-the-workflow">1 Extending the Workflow</a><ul>
+<li><a class="reference internal" href="#adding-new-rules">1.1 Adding New Rules</a></li>
+<li><a class="reference internal" href="#rule-categories">1.2 Rule Categories</a></li>
+<li><a class="reference internal" href="#adding-to-target-rule">1.3 Adding to Target Rule</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modifying-parameters">2 Modifying Parameters</a><ul>
+<li><a class="reference internal" href="#configuration-hierarchy">2.1 Configuration Hierarchy</a></li>
+<li><a class="reference internal" href="#key-parameters">2.2 Key Parameters</a></li>
+<li><a class="reference internal" href="#testing-parameter-changes">2.3 Testing Parameter Changes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-as-snakemake-module">3 Using as Snakemake Module</a><ul>
+<li><a class="reference internal" href="#basic-module-usage">3.1 Basic Module Usage</a></li>
+<li><a class="reference internal" href="#your-configuration">3.2 Your Configuration</a></li>
+<li><a class="reference internal" href="#chaining-with-your-rules">3.3 Chaining with Your Rules</a></li>
+<li><a class="reference internal" href="#overriding-specific-rules">3.4 Overriding Specific Rules</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#directory-structure">4 Directory Structure</a></li>
+<li><a class="reference internal" href="#conda-environments">5 Conda Environments</a><ul>
+<li><a class="reference internal" href="#adding-dependencies">5.1 Adding Dependencies</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debugging">6 Debugging</a><ul>
+<li><a class="reference internal" href="#common-issues">6.1 Common Issues</a></li>
+<li><a class="reference internal" href="#verbose-output">6.2 Verbose Output</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing">7 Testing</a><ul>
+<li><a class="reference internal" href="#validate-configuration">7.1 Validate Configuration</a></li>
+<li><a class="reference internal" href="#test-single-system">7.2 Test Single System</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#citation">8 Citation</a></li>
+<li><a class="reference internal" href="#adding-new-systems">9 Adding New Systems</a><ul>
+<li><a class="reference internal" href="#quick-checklist">9.1 Quick Checklist</a></li>
+<li><a class="reference internal" href="#common-mistakes">9.2 Common Mistakes</a></li>
+<li><a class="reference internal" href="#system-size-guidelines">9.3 System Size Guidelines</a></li>
+</ul>
+</li>
+</ul>
+</div><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/HaoZeke/eon_orchestrator"
+  data-type="github" data-user="HaoZeke" data-repo="eon_orchestrator">
+  <span class="w-8 flex items-center justify-around shrink-0 text-3xl">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </span>
+  <span class="flex-grow px-2 break-all">
+    
+    
+      <span>eon_orchestrator</span>
+    
+    <span class="flex text-sm repo-stats-count">
+      <span class="flex items-center pr-3">
+        <iconify-icon icon="lucide:star"></iconify-icon>
+        <strong class="js-repo-stars ml-1">0</strong>
+      </span>
+      <span class="flex items-center">
+        <iconify-icon icon="lucide:git-fork"></iconify-icon>
+        <strong class="js-repo-forks ml-1">0</strong>
+      </span>
+    </span>
+  </span>
+</a><div class="edit-this-page">
+  <a href="https://github.com/HaoZeke/eon_orchestrator/blob/main/docs/source/devnotes.rst">Edit this page</a>
+</div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">NEB Orchestrator</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Developer Notes</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <div class="copy-page-wrapper relative pb-4 lg:absolute lg:top-8 lg:right-6 xl:right-12">
+  <div id="copy-page-trigger">
+    <button
+      type="button"
+      class="js-copy px-3 py-1 inline-flex items-center gap-1"
+      data-url="neb-orchestrator.rgoswami.me/_sources/devnotes.rst.txt"
+    >
+      <i class="i-lucide" data-icon="copy"></i>
+      <span>Copy page</span>
+    </button>
+    <button class="js-menu px-2 py-1" type="button" aria-label="More actions"
+      aria-haspopup="menu" aria-expanded="false" aria-controls="copy-page-content">
+      <i class="i-lucide chevron-down"></i>
+    </button>
+  </div>
+  <div id="copy-page-content" role="menu" aria-orientation="vertical" aria-hidden="true">
+    <div role="presentation">
+      <div class="flex flex-col" role="group">
+        <button class="js-copy" type="button" role="menuitem"
+          data-url="neb-orchestrator.rgoswami.me/_sources/devnotes.rst.txt">
+          <span class="iconify-icon">
+            <i class="i-lucide" data-icon="copy"></i>
+          </span>
+          <span>Copy page</span>
+        </button>
+        <a role="menuitem" href="neb-orchestrator.rgoswami.me/_sources/devnotes.rst.txt" target="_blank" rel="nofollow"><iconify-icon icon="bi:code-slash"></iconify-icon>
+            <span>View Source</span></a><a role="menuitem" href="https://chatgpt.com/?hints=search&q=Read%20neb-orchestrator.rgoswami.me/_sources/devnotes.rst.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:openai"></iconify-icon>
+          <span>Open in ChatGPT</span>
+        </a><a role="menuitem" href="https://claude.ai/new?q=Read%20neb-orchestrator.rgoswami.me/_sources/devnotes.rst.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:claude"></iconify-icon>
+          <span>Open in Claude</span>
+        </a></div>
+    </div>
+  </div>
+</div><article class="yue dark-code" role="main">
+          <section id="developer-notes">
+<h1>Developer Notes<a class="headerlink" href="#developer-notes" title="Link to this heading">¶</a></h1>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">Date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>2026-03-14</p>
+</dd>
+</dl>
+</div></blockquote>
+<section id="extending-the-workflow">
+<h2>1 Extending the Workflow<a class="headerlink" href="#extending-the-workflow" title="Link to this heading">¶</a></h2>
+<section id="adding-new-rules">
+<h3>1.1 Adding New Rules<a class="headerlink" href="#adding-new-rules" title="Link to this heading">¶</a></h3>
+<p>Rules are in <code class="docutils literal notranslate"><span class="pre">workflow/rules/*.smk</span></code>. Each rule should:</p>
+<ol class="arabic simple">
+<li><p>Have clear docstring explaining purpose</p></li>
+<li><p>Use wildcards for system-agnostic operation</p></li>
+<li><p>Specify inputs/outputs explicitly</p></li>
+<li><p>Use conda environments for reproducibility</p></li>
+</ol>
+<p>Example rule template:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">rule</span> <span class="n">my_new_rule</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="3"><span class="sd">    Description of what this rule does.</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="sd">    Inputs:</span>
+</span><span data-line="6"><span class="sd">        - input1: Description</span>
+</span><span data-line="7"><span class="sd">    Outputs:</span>
+</span><span data-line="8"><span class="sd">        - output1: Description</span>
+</span><span data-line="9"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="10">    <span class="nb">input</span><span class="p">:</span>
+</span><span data-line="11">        <span class="n">input1</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">][</span><span class="s1">&#39;neb&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/</span><span class="si">{system}</span><span class="s1">/input.con&#39;</span><span class="p">,</span>
+</span><span data-line="12">    <span class="n">output</span><span class="p">:</span>
+</span><span data-line="13">        <span class="n">output1</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">][</span><span class="s1">&#39;neb&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/</span><span class="si">{system}</span><span class="s1">/output.dat&#39;</span><span class="p">,</span>
+</span><span data-line="14">    <span class="n">params</span><span class="p">:</span>
+</span><span data-line="15">        <span class="c1"># Parameters from config</span>
+</span><span data-line="16">        <span class="n">param1</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;my_section&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;param1&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">),</span>
+</span><span data-line="17">    <span class="n">shell</span><span class="p">:</span>
+</span><span data-line="18"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="19"><span class="sd">        my_command {input.input1} {output.output1} --param {params.param1}</span>
+</span><span data-line="20"><span class="sd">        &quot;&quot;&quot;</span>
+</span></pre></div>
+</div>
+</section>
+<section id="rule-categories">
+<h3>1.2 Rule Categories<a class="headerlink" href="#rule-categories" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">get_model.smk</span></code> - Model retrieval</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">align_endpoints.smk</span></code> - IRA alignment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">minimize.smk</span></code> - Geometry optimization</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">generate_idpp.smk</span></code> - IDPP path generation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_neb.smk</span></code> - NEB optimization</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">visualize.smk</span></code> - Plotting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_path.smk</span></code> - Path validation</p></li>
+</ul>
+</section>
+<section id="adding-to-target-rule">
+<h3>1.3 Adding to Target Rule<a class="headerlink" href="#adding-to-target-rule" title="Link to this heading">¶</a></h3>
+<p>Update <code class="docutils literal notranslate"><span class="pre">rule</span> <span class="pre">all</span></code> in <code class="docutils literal notranslate"><span class="pre">workflow/Snakefile</span></code> to include new outputs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">rule</span> <span class="nb">all</span><span class="p">:</span>
+</span><span data-line="2">    <span class="nb">input</span><span class="p">:</span>
+</span><span data-line="3">        <span class="n">expand</span><span class="p">(</span>
+</span><span data-line="4">            <span class="p">[</span>
+</span><span data-line="5">                <span class="c1"># Existing outputs...</span>
+</span><span data-line="6">                <span class="n">config</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">][</span><span class="s1">&#39;plots&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/</span><span class="si">{system}</span><span class="s1">/my_new_plot.png&#39;</span><span class="p">,</span>
+</span><span data-line="7">            <span class="p">],</span>
+</span><span data-line="8">            <span class="n">system</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;systems&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span data-line="9">        <span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="modifying-parameters">
+<h2>2 Modifying Parameters<a class="headerlink" href="#modifying-parameters" title="Link to this heading">¶</a></h2>
+<section id="configuration-hierarchy">
+<h3>2.1 Configuration Hierarchy<a class="headerlink" href="#configuration-hierarchy" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">config/config.yaml</span></code> - Global defaults</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/*/config.yaml</span></code> - Example-specific overrides</p></li>
+<li><p>Command-line: <code class="docutils literal notranslate"><span class="pre">--config</span> <span class="pre">systems.my_system.param=value</span></code></p></li>
+</ol>
+</section>
+<section id="key-parameters">
+<h3>2.2 Key Parameters<a class="headerlink" href="#key-parameters" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Section</p></th>
+<th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">neb.optimization</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">images</span></code></p></td>
+<td><p>18</p></td>
+<td><p>Number of NEB images</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">neb.optimization</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">converged_force</span></code></p></td>
+<td><p>0.0514</p></td>
+<td><p>Force tolerance (eV/Å)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">neb.optimization</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">energy_weighted</span></code></p></td>
+<td><p>true</p></td>
+<td><p>Energy-weighted springs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">alignment</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kmax</span></code></p></td>
+<td><p>1.8</p></td>
+<td><p>IRA matching cutoff (Å⁻¹)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plotting.figure</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zoom_ratio</span></code></p></td>
+<td><p>0.3</p></td>
+<td><p>Structure inset zoom</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plotting</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ira_kmax</span></code></p></td>
+<td><p>14</p></td>
+<td><p>RMSD calculation kmax</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="testing-parameter-changes">
+<h3>2.3 Testing Parameter Changes<a class="headerlink" href="#testing-parameter-changes" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Dry-run to check DAG changes</span>
+</span><span data-line="2">pixi<span class="w"> </span>run<span class="w"> </span>validate
+</span><span data-line="3">
+</span><span data-line="4"><span class="c1"># Run single system</span>
+</span><span data-line="5">snakemake<span class="w"> </span>--configfile<span class="w"> </span>my_config.yaml<span class="w"> </span>-c4
+</span><span data-line="6"><span class="c1"># Force re-run with new params</span>
+</span><span data-line="7">snakemake<span class="w"> </span>--configfile<span class="w"> </span>my_config.yaml<span class="w"> </span>-c4<span class="w"> </span>--use-conda<span class="w"> </span>--rerun-incomplete
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="using-as-snakemake-module">
+<h2>3 Using as Snakemake Module<a class="headerlink" href="#using-as-snakemake-module" title="Link to this heading">¶</a></h2>
+<section id="basic-module-usage">
+<h3>3.1 Basic Module Usage<a class="headerlink" href="#basic-module-usage" title="Link to this heading">¶</a></h3>
+<p>In your workflow’s <code class="docutils literal notranslate"><span class="pre">Snakefile</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Import NEB Orchestrator as module</span>
+</span><span data-line="2"><span class="n">module</span> <span class="n">neb_orchestrator</span><span class="p">:</span>
+</span><span data-line="3">    <span class="n">snakefile</span><span class="p">:</span> <span class="s2">&quot;path/to/eon_orchestrator/workflow/Snakefile&quot;</span>
+</span><span data-line="4">    <span class="n">config</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;neb&quot;</span><span class="p">]</span>  <span class="c1"># Your NEB config section</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="c1"># Use rules from module</span>
+</span><span data-line="7"><span class="n">use</span> <span class="n">rule</span> <span class="o">*</span> <span class="kn">from</span><span class="w"> </span><span class="nn">neb_orchestrator</span> <span class="k">as</span> <span class="n">neb_</span><span class="o">*</span>
+</span></pre></div>
+</div>
+</section>
+<section id="your-configuration">
+<h3>3.2 Your Configuration<a class="headerlink" href="#your-configuration" title="Link to this heading">¶</a></h3>
+<p>In your <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">neb</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">systems</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">    </span><span class="nt">my_reaction</span><span class="p">:</span>
+</span><span data-line="4"><span class="w">      </span><span class="nt">reactant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/reactant.con</span>
+</span><span data-line="5"><span class="w">      </span><span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/product.con</span>
+</span><span data-line="6"><span class="w">      </span><span class="nt">use_ira</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="w">  </span><span class="nt">model</span><span class="p">:</span>
+</span><span data-line="9"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pet-mad-xs-v1.5.0</span>
+</span><span data-line="10"><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.5.0</span>
+</span><span data-line="11">
+</span><span data-line="12"><span class="w">  </span><span class="nt">compute</span><span class="p">:</span>
+</span><span data-line="13"><span class="w">    </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpu</span><span class="w">  </span><span class="c1"># or cuda</span>
+</span><span data-line="14">
+</span><span data-line="15"><span class="w">  </span><span class="nt">neb</span><span class="p">:</span>
+</span><span data-line="16"><span class="w">    </span><span class="nt">optimization</span><span class="p">:</span>
+</span><span data-line="17"><span class="w">      </span><span class="nt">images</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">18</span>
+</span><span data-line="18"><span class="w">      </span><span class="nt">converged_force</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0514221</span>
+</span></pre></div>
+</div>
+</section>
+<section id="chaining-with-your-rules">
+<h3>3.3 Chaining with Your Rules<a class="headerlink" href="#chaining-with-your-rules" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Your workflow</span>
+</span><span data-line="2"><span class="n">rule</span> <span class="nb">all</span><span class="p">:</span>
+</span><span data-line="3">    <span class="nb">input</span><span class="p">:</span>
+</span><span data-line="4">        <span class="s2">&quot;analysis/my_reaction/summary.txt&quot;</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="c1"># Run NEB first</span>
+</span><span data-line="7"><span class="n">rule</span> <span class="n">run_neb</span><span class="p">:</span>
+</span><span data-line="8">    <span class="nb">input</span><span class="p">:</span>
+</span><span data-line="9">        <span class="n">neb_results</span><span class="o">=</span><span class="n">rules</span><span class="o">.</span><span class="n">neb_run_neb</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">results_dat</span>
+</span><span data-line="10">    <span class="n">output</span><span class="p">:</span>
+</span><span data-line="11">        <span class="s2">&quot;analysis/</span><span class="si">{system}</span><span class="s2">/summary.txt&quot;</span>
+</span><span data-line="12">    <span class="n">script</span><span class="p">:</span>
+</span><span data-line="13">        <span class="s2">&quot;scripts/analyze_neb.py&quot;</span>
+</span></pre></div>
+</div>
+</section>
+<section id="overriding-specific-rules">
+<h3>3.4 Overriding Specific Rules<a class="headerlink" href="#overriding-specific-rules" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Use your custom visualization instead</span>
+</span><span data-line="2"><span class="n">use</span> <span class="n">rule</span> <span class="n">run_neb</span> <span class="kn">from</span><span class="w"> </span><span class="nn">neb_orchestrator</span> <span class="k">as</span> <span class="n">neb_run_neb</span>
+</span><span data-line="3"><span class="n">use</span> <span class="n">rule</span> <span class="o">*</span> <span class="kn">from</span><span class="w"> </span><span class="nn">neb_orchestrator</span> <span class="k">as</span> <span class="n">neb_</span><span class="o">*</span>  <span class="c1"># Other rules</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="n">rule</span> <span class="n">my_custom_viz</span><span class="p">:</span>
+</span><span data-line="6">    <span class="nb">input</span><span class="p">:</span>
+</span><span data-line="7">        <span class="n">neb_run_neb</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">results_dat</span>
+</span><span data-line="8">    <span class="n">output</span><span class="p">:</span>
+</span><span data-line="9">        <span class="s2">&quot;plots/</span><span class="si">{system}</span><span class="s2">/custom.png&quot;</span>
+</span><span data-line="10">    <span class="n">script</span><span class="p">:</span>
+</span><span data-line="11">        <span class="s2">&quot;scripts/my_viz.py&quot;</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="directory-structure">
+<h2>4 Directory Structure<a class="headerlink" href="#directory-structure" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">workflow/
+</span><span data-line="2">├── Snakefile              # Main entry point, rule all
+</span><span data-line="3">├── rules/
+</span><span data-line="4">│   ├── get_model.smk      # Model retrieval
+</span><span data-line="5">│   ├── align_endpoints.smk # IRA alignment
+</span><span data-line="6">│   ├── minimize.smk       # Endpoint minimization
+</span><span data-line="7">│   ├── generate_idpp.smk  # IDPP path (optional)
+</span><span data-line="8">│   ├── run_neb.smk        # NEB optimization
+</span><span data-line="9">│   ├── visualize.smk      # Plotting
+</span><span data-line="10">│   └── validate_path.smk  # Path validation
+</span><span data-line="11">└── envs/
+</span><span data-line="12">    ├── model.yaml         # Model retrieval env
+</span><span data-line="13">    ├── alignment.yaml     # IRA alignment env
+</span><span data-line="14">    ├── minimize.yaml      # Minimization env
+</span><span data-line="15">    ├── idpp.yaml          # IDPP env
+</span><span data-line="16">    ├── neb.yaml           # NEB optimization env
+</span><span data-line="17">    └── visualize.yaml     # Plotting env
+</span></pre></div>
+</div>
+</section>
+<section id="conda-environments">
+<h2>5 Conda Environments<a class="headerlink" href="#conda-environments" title="Link to this heading">¶</a></h2>
+<p>Each rule has its own environment in <code class="docutils literal notranslate"><span class="pre">workflow/envs/*.yaml</span></code>. Environments are:</p>
+<ul class="simple">
+<li><p>Minimal (only required dependencies)</p></li>
+<li><p>Pinned to specific versions for reproducibility</p></li>
+<li><p>Automatically managed by Snakemake <code class="docutils literal notranslate"><span class="pre">--use-conda</span></code></p></li>
+</ul>
+<section id="adding-dependencies">
+<h3>5.1 Adding Dependencies<a class="headerlink" href="#adding-dependencies" title="Link to this heading">¶</a></h3>
+<p>Edit the appropriate <code class="docutils literal notranslate"><span class="pre">workflow/envs/*.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">neb-optimization</span>
+</span><span data-line="2"><span class="nt">channels</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conda-forge</span>
+</span><span data-line="4"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metatensor</span>
+</span><span data-line="5"><span class="nt">dependencies</span><span class="p">:</span>
+</span><span data-line="6"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python=3.11</span>
+</span><span data-line="7"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pip</span>
+</span><span data-line="8"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pip</span><span class="p">:</span>
+</span><span data-line="9"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eonclient&gt;=0.1.0</span>
+</span><span data-line="10"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your-new-package&gt;=1.0.0</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="debugging">
+<h2>6 Debugging<a class="headerlink" href="#debugging" title="Link to this heading">¶</a></h2>
+<section id="common-issues">
+<h3>6.1 Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Problem</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MissingInputException</span></code></p></td>
+<td><p>Check file paths in config</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RuleException</span></code></p></td>
+<td><p>Check rule docstring for expected inputs</p></td>
+</tr>
+<tr class="row-even"><td><p>Conda env fails</p></td>
+<td><p>Run <code class="docutils literal notranslate"><span class="pre">snakemake</span> <span class="pre">--conda-create-envs-only</span></code> first</p></td>
+</tr>
+<tr class="row-odd"><td><p>Plotting fails</p></td>
+<td><p>Check <code class="docutils literal notranslate"><span class="pre">RGPYCRUMBS_AUTO_DEPS=1</span></code> is set</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="verbose-output">
+<h3>6.2 Verbose Output<a class="headerlink" href="#verbose-output" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Show full traceback</span>
+</span><span data-line="2">snakemake<span class="w"> </span>--configfile<span class="w"> </span>config.yaml<span class="w"> </span>-c4<span class="w"> </span>--use-conda<span class="w"> </span>--verbose
+</span><span data-line="3">
+</span><span data-line="4"><span class="c1"># Show conda env creation</span>
+</span><span data-line="5">snakemake<span class="w"> </span>--conda-create-envs-only
+</span><span data-line="6"><span class="c1"># Dry-run with reasons</span>
+</span><span data-line="7">snakemake<span class="w"> </span>-n<span class="w"> </span>--configfile<span class="w"> </span>config.yaml<span class="w"> </span>--reason
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="testing">
+<h2>7 Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
+<section id="validate-configuration">
+<h3>7.1 Validate Configuration<a class="headerlink" href="#validate-configuration" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Check YAML syntax</span>
+</span><span data-line="2">pixi<span class="w"> </span>run<span class="w"> </span>lint
+</span><span data-line="3">
+</span><span data-line="4"><span class="c1"># Validate workflow DAG</span>
+</span><span data-line="5">pixi<span class="w"> </span>run<span class="w"> </span>validate
+</span></pre></div>
+</div>
+</section>
+<section id="test-single-system">
+<h3>7.2 Test Single System<a class="headerlink" href="#test-single-system" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Run HCN example (fastest)</span>
+</span><span data-line="2">pixi<span class="w"> </span>run<span class="w"> </span>-e<span class="w"> </span>eon<span class="w"> </span>hcn
+</span><span data-line="3">
+</span><span data-line="4"><span class="c1"># Check outputs</span>
+</span><span data-line="5">ls<span class="w"> </span>results/neb/hcn_isom/
+</span><span data-line="6">cat<span class="w"> </span>results/neb/hcn_isom/results.dat
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="citation">
+<h2>8 Citation<a class="headerlink" href="#citation" title="Link to this heading">¶</a></h2>
+<p>When extending or using this workflow:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1">R. Goswami, M. Gunde, and H. Jónsson, &quot;Enhanced climbing image nudged elastic band method with hessian eigenmode alignment,&quot; arXiv:2601.12630, Jan. 2026. doi: `10.48550/arXiv.2601.12630 &lt;https://doi.org/10.48550/arXiv.2601.12630&gt;`_.
+</span></pre></div>
+</div>
+</section>
+<section id="adding-new-systems">
+<h2>9 Adding New Systems<a class="headerlink" href="#adding-new-systems" title="Link to this heading">¶</a></h2>
+<section id="quick-checklist">
+<h3>9.1 Quick Checklist<a class="headerlink" href="#quick-checklist" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Prepare reactant/product structures (same atom order!)</p></li>
+<li><p>Copy example config: <code class="docutils literal notranslate"><span class="pre">cp</span> <span class="pre">examples/hcn_isom/config.yaml</span> <span class="pre">my_system.yaml</span></code></p></li>
+<li><p>Edit paths and system name</p></li>
+<li><p>Validate: <code class="docutils literal notranslate"><span class="pre">snakemake</span> <span class="pre">--configfile</span> <span class="pre">my_system.yaml</span> <span class="pre">-n</span></code></p></li>
+<li><p>Run: <code class="docutils literal notranslate"><span class="pre">snakemake</span> <span class="pre">--configfile</span> <span class="pre">my_system.yaml</span> <span class="pre">-c4</span> <span class="pre">--use-conda</span></code></p></li>
+</ol>
+</section>
+<section id="common-mistakes">
+<h3>9.2 Common Mistakes<a class="headerlink" href="#common-mistakes" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mistake</p></th>
+<th class="head"><p>Symptom</p></th>
+<th class="head"><p>Fix</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Wrong atom order</p></td>
+<td><p>Barrier &gt;5 eV</p></td>
+<td><p>Reorder atoms to match</p></td>
+</tr>
+<tr class="row-odd"><td><p>Missing box</p></td>
+<td><p>eOn error</p></td>
+<td><p>Add 25 Å cubic box</p></td>
+</tr>
+<tr class="row-even"><td><p>Too few images</p></td>
+<td><p>NEB doesn’t converge</p></td>
+<td><p>Use 18-24 for medium systems</p></td>
+</tr>
+<tr class="row-odd"><td><p>kmax too low</p></td>
+<td><p>IRA alignment fails</p></td>
+<td><p>Try kmax=2.5-3.0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="system-size-guidelines">
+<h3>9.3 System Size Guidelines<a class="headerlink" href="#system-size-guidelines" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Atoms</p></th>
+<th class="head"><p>Images</p></th>
+<th class="head"><p>kmax</p></th>
+<th class="head"><p>Time (CPU)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>3-5</p></td>
+<td><p>12-16</p></td>
+<td><p>1.8</p></td>
+<td><p>2-5 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>6-10</p></td>
+<td><p>18-20</p></td>
+<td><p>2.0</p></td>
+<td><p>5-10 min</p></td>
+</tr>
+<tr class="row-even"><td><p>11-20</p></td>
+<td><p>20-24</p></td>
+<td><p>2.5</p></td>
+<td><p>10-20 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>20+</p></td>
+<td><p>24-30</p></td>
+<td><p>3.0</p></td>
+<td><p>20+ min</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>See <a class="reference external" href="tutorials/adding_systems.rst">Adding Your Own System</a> for detailed guide.</p>
+</section>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="contributing/code_of_conduct.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Code of Conduct</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="changelog.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Changelog</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--sy-c-text-weak);
+        font-size: 0.9em;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 1rem;
+          align-items: center;
+        "
+      >
+        
+        <span style="display: inline-flex; align-items: center; gap: 0.3em">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M7,20H4V4h3V20z M14,20h-3V12h3V20z M21,20h-3V8h3V20z" />
+          </svg>
+          <span
+            >Analytics by
+            <a
+              href="https://umami.is/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="color: inherit; text-decoration: underline"
+              >Umami</a
+            ></span
+          >
+        </span>
+
+        
+        <span style="display: inline-flex; align-items: center; gap: 0.3em">
+          <span>provided by</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.3em">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1.2em"
+              height="1.2em"
+              viewBox="0 0 64 64"
+              aria-hidden="true"
+            >
+              <g fill-rule="evenodd">
+                <ellipse cx="32" cy="11" fill="#80D25B" rx="7" ry="9" />
+                <path
+                  fill="#80D25B"
+                  d="M20.302104,46 C20.302104,46 17.1330329,55.8812548 20.6828149,59.7817355 C24.232597,63.6822162 26.8008673,63.215359 26.8008673,53.7414927 C26.8008673,44.2676263 20.302104,46 20.302104,46 Z"
+                />
+                <path
+                  fill="#80D25B"
+                  d="M38.302104,46 C38.302104,46 35.1330329,55.8812548 38.6828149,59.7817355 C42.232597,63.6822162 44.8008673,63.215359 44.8008673,53.7414927 C44.8008673,44.2676263 38.302104,46 38.302104,46 Z"
+                  transform="matrix(-1 0 0 1 81.8 0)"
+                />
+                <path
+                  fill="#80D25B"
+                  d="M20.6227767,21.2218684 C20.6227767,21.2218684 13.956214,15.3844007 10.091955,16.0534044 C6.22769598,16.722408 6,22.2124633 6,23.9992899 C6,25.7861165 7.78917398,37.3159836 9.78726488,36.4967476 C11.7853558,35.6775115 13.7411938,27.959322 13.7411938,27.959322 15.6510232,30.2287702 18.609193,30.4630388"
+                />
+                <path
+                  fill="#80D25B"
+                  d="M57.6227767,21.2218684 C57.6227767,21.2218684 50.956214,15.3844007 47.091955,16.0534044 C43.227696,16.722408 43,22.2124633 43,23.9992899 C43,25.7861165 44.789174,37.3159836 46.7872649,36.4967476 C48.7853558,35.6775115 50.7411938,27.959322 50.7411938,27.959322 52.6510232,30.2287702 55.609193,30.4630388"
+                  transform="matrix(-1 0 0 1 100.623 0)"
+                />
+                <path
+                  fill="#BD7575"
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M32,53 C40.836556,53 48,44.4934102 48,34 C48,23.5065898 46.6814044,17 32,17 C17.3185956,17 16,23.5065898 16,34 C16,44.4934102 23.163444,53 32,53 Z"
+                />
+                <polygon
+                  fill="#BD7575"
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  points="32 22 38.928 26 38.928 34 32 38 25.072 34 25.072 26"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M30,8 C28.8954305,8 28,8.8954305 28,10"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M36,8 C34.8954305,8 34,8.8954305 34,10"
+                  transform="matrix(-1 0 0 1 70 0)"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M32.1194396 38.1881507L32.1194396 52.4125899M32.0164956 21.7467197L32.0164956 17M25.2141026 26.0041506L17.737148 23.0721126M25.1254173 34.1534318L16.7659494 38.8876521"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M46.2141026,26.0041506 L38.737148,23.0721126"
+                  transform="matrix(-1 0 0 1 84.951 0)"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M47.1254173,34.1534318 L38.7659494,38.8876521"
+                  transform="matrix(-1 0 0 1 85.891 0)"
+                />
+              </g>
+            </svg>
+            <a
+              href="https://turtletech.us/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="color: inherit; text-decoration: underline"
+              >TurtleTech ehf</a
+            >
+          </span>
+        </span>
+      </div>
+    </div>
+
+    
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, NEB Orchestrator Team, TurtleTech ehf</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div> <div class="sy-foot-socials">
+<a href="https://github.com/HaoZeke/eon_orchestrator" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+</html>

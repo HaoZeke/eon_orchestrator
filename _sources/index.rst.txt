@@ -1,0 +1,88 @@
+
+================
+NEB Orchestrator
+================
+
+:Author: `Rohit Goswami <https://rgoswami.me>`_
+:Version: 0.1.0
+:License: MIT
+
+.. container:: badges
+
+   .. image:: https://github.com/HaoZeke/eon_orchestrator/actions/workflows/ci.yml/badge.svg
+      :target: https://github.com/HaoZeke/eon_orchestrator/actions/workflows/ci.yml
+      :alt: CI Status
+
+   .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+      :target: https://opensource.org/licenses/MIT
+      :alt: License: MIT
+
+Modular Snakemake workflow for automated Nudged Elastic Band (NEB) calculations
+using eOn with machine learning potentials (PET-MAD/uPET).
+
+Quick Start
+-----------
+
+.. code:: bash
+
+    git clone https://github.com/HaoZeke/eon_orchestrator.git
+    cd eon_orchestrator
+    pixi install -e eon
+
+    # Validate workflow (no eOn needed)
+    pixi run validate
+
+    # Run example (requires eOn)
+    pixi run -e eon hcn
+
+Features
+--------
+
+- Each workflow stage is a separate, reusable Snakemake rule module
+
+- pixi manages all dependencies for reproducibility
+
+- PET-MAD/uPET machine learning potentials from HuggingFace
+
+- 1D energy profiles and 2D RMSD landscape visualization
+
+- Tested on five example systems (3 to 22 atoms)
+
+System Applicability
+--------------------
+
+Optimized for gas-phase molecular systems (5-50 atoms):
+single or multiple bond breaking/forming, isomerization,
+proton transfer, and conformational changes.
+
+Surface reactions, condensed phase, or enzymatic systems require
+modifications to cell parameters and boundary conditions.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Getting Started
+
+   quickstart
+   tutorials/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+
+   parameter_guide
+   reference/configuration
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer Guide
+
+   contributing/index
+   devnotes
+   changelog
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Community
+
+   citation
+   used_by

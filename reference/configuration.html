@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Configuration Reference - NEB Orchestrator documentation</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Contributing Guide" href="../contributing/index.html" /><link rel="prev" title="Parameter Selection Guide" href="../parameter_guide.html" />
+      <link rel="canonical" href="neb-orchestrator.rgoswami.me/reference/configuration.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=a318c5d4" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/>
+  <meta property="og:url" content="neb-orchestrator.rgoswami.me/reference/configuration.html"/>
+  <meta property="og:title" content="Configuration Reference"/>
+    <meta name="twitter:card" content="summary"/>
+  <!-- Manual favicon handling with favicon.io -->
+<!-- since sphinx-favicon doesn't work with shibuya -->
+<link rel="icon" type="image/png" sizes="16x16" href="../_static/favicons/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../_static/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../_static/favicons/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="../_static/favicons/android-chrome-512x512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../_static/favicons/apple-touch-icon.png">
+<link rel="shortcut icon" href="../_static/favicons/favicon.ico">
+<link rel="manifest" href="../_static/favicons/site.webmanifest">
+<!-- Umami analytics -->
+<script defer src="https://analytics.turtletech.us/script.js" data-website-id="fe91a76b-5f16-4b7b-97cc-d0afe09a8b9a"></script>
+<script>window.umami=window.umami||{track:function(){}};document.addEventListener('click',function(e){var a=e.target.closest('a');if(a&&a.hostname!==location.hostname)umami.track('Outbound Link',{url:a.href})});</script></head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      
+      
+      <strong>NEB Orchestrator</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul>
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-1" aria-controls="nav-children-1">
+            <span>Ecosystem</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul id="nav-children-1" aria-labelledby="nav-trigger-1"><li><a href="https://eondocs.org">
+                <span>eOn</span>
+                <small>Nudged Elastic Band engine</small>
+              </a></li><li><a href="https://huggingface.co/lab-cosmo/pet-mad">
+                <span>PET-MAD</span>
+                <small>Machine learning potential</small>
+              </a></li><li><a href="https://rgpycrumbs.rgoswami.me">
+                <span>rgpycrumbs</span>
+                <small>Alignment and visualization tools</small>
+              </a></li></ul>
+      </li><li class="link">
+          <a href="https://pypi.org/project/eon-orchestrator/">
+            <span>PyPI</span><i class="i-lucide external-link"></i></a>
+        </li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/HaoZeke/eon_orchestrator" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="1"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1 _expand"><a class="reference internal" href="../quickstart.html">Quickstart Guide</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/hcn.html">HCN Isomerization Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/sn2.html">Sn2 Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/vinyl_alcohol.html">Vinyl<sub>alcohol</sub>Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/diels_alder.html">Diels<sub>alder</sub>Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/adding_systems.html">Adding Your Own System</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 _expand"><a class="reference internal" href="../parameter_guide.html">Parameter Selection Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1 _expand"><a class="reference internal" href="../contributing/index.html">Contributing Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+</li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="../devnotes.html">Developer Notes</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1 _expand"><a class="reference internal" href="../citation.html">How to Cite NEB Orchestrator</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="../used_by.html">Used By</a></li>
+</ul>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#id1">1 Configuration Reference</a></li>
+<li><a class="reference internal" href="#system-definitions">2 System Definitions</a><ul>
+<li><a class="reference internal" href="#systems">2.1 <code class="docutils literal notranslate"><span class="pre">systems</span></code></a><ul>
+<li><a class="reference internal" href="#structure">2.1.1 Structure</a></li>
+<li><a class="reference internal" href="#parameters">2.1.2 Parameters</a></li>
+<li><a class="reference internal" href="#example">2.1.3 Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#model-configuration">3 Model Configuration</a><ul>
+<li><a class="reference internal" href="#model">3.1 <code class="docutils literal notranslate"><span class="pre">model</span></code></a><ul>
+<li><a class="reference internal" href="#id2">3.1.1 Parameters</a></li>
+<li><a class="reference internal" href="#available-models">3.1.2 Available Models</a></li>
+<li><a class="reference internal" href="#id3">3.1.3 Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#compute-settings">4 Compute Settings</a><ul>
+<li><a class="reference internal" href="#compute">4.1 <code class="docutils literal notranslate"><span class="pre">compute</span></code></a><ul>
+<li><a class="reference internal" href="#id4">4.1.1 Parameters</a></li>
+<li><a class="reference internal" href="#device-selection">4.1.2 Device Selection</a></li>
+<li><a class="reference internal" href="#id5">4.1.3 Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#alignment-parameters">5 Alignment Parameters</a><ul>
+<li><a class="reference internal" href="#alignment">5.1 <code class="docutils literal notranslate"><span class="pre">alignment</span></code></a><ul>
+<li><a class="reference internal" href="#id6">5.1.1 Parameters</a></li>
+<li><a class="reference internal" href="#guidelines">5.1.2 Guidelines</a></li>
+<li><a class="reference internal" href="#id7">5.1.3 Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#neb-parameters">6 NEB Parameters</a><ul>
+<li><a class="reference internal" href="#neb">6.1 <code class="docutils literal notranslate"><span class="pre">neb</span></code></a><ul>
+<li><a class="reference internal" href="#neb-minimization">6.1.1 <code class="docutils literal notranslate">minimization</span></code></a></li>
+<li><a class="reference internal" href="#neb-optimization">6.1.2 <code class="docutils literal notranslate">optimization</span></code></a><ul>
+<li><a class="reference internal" href="#energy-weighted-springs">6.1.2.1 Energy-Weighted Springs</a></li>
+<li><a class="reference internal" href="#climbing-image">6.1.2.2 Climbing Image</a></li>
+<li><a class="reference internal" href="#mmf-refinement">6.1.2.3 MMF Refinement</a></li>
+<li><a class="reference internal" href="#sidpp-initializer">6.1.2.4 SIDPP Initializer</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#neb-idpp">6.1.3 <code class="docutils literal notranslate">idpp</span></code></a></li>
+<li><a class="reference internal" href="#id8">6.1.4 Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#visualization-parameters">7 Visualization Parameters</a><ul>
+<li><a class="reference internal" href="#plotting">7.1 <code class="docutils literal notranslate"><span class="pre">plotting</span></code></a><ul>
+<li><a class="reference internal" href="#general">7.1.1 General</a></li>
+<li><a class="reference internal" href="#figure-settings">7.1.2 Figure Settings</a></li>
+<li><a class="reference internal" href="#fonts">7.1.3 Fonts</a></li>
+<li><a class="reference internal" href="#structure-overlays">7.1.4 Structure Overlays</a></li>
+<li><a class="reference internal" href="#advanced">7.1.5 Advanced</a></li>
+<li><a class="reference internal" href="#id9">7.1.6 Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#path-configuration">8 Path Configuration</a><ul>
+<li><a class="reference internal" href="#paths">8.1 <code class="docutils literal notranslate"><span class="pre">paths</span></code></a><ul>
+<li><a class="reference internal" href="#id10">8.1.1 Parameters</a></li>
+<li><a class="reference internal" href="#id11">8.1.2 Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#complete-configuration-example">9 Complete Configuration Example</a></li>
+</ul>
+</div><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/HaoZeke/eon_orchestrator"
+  data-type="github" data-user="HaoZeke" data-repo="eon_orchestrator">
+  <span class="w-8 flex items-center justify-around shrink-0 text-3xl">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </span>
+  <span class="flex-grow px-2 break-all">
+    
+    
+      <span>eon_orchestrator</span>
+    
+    <span class="flex text-sm repo-stats-count">
+      <span class="flex items-center pr-3">
+        <iconify-icon icon="lucide:star"></iconify-icon>
+        <strong class="js-repo-stars ml-1">0</strong>
+      </span>
+      <span class="flex items-center">
+        <iconify-icon icon="lucide:git-fork"></iconify-icon>
+        <strong class="js-repo-forks ml-1">0</strong>
+      </span>
+    </span>
+  </span>
+</a><div class="edit-this-page">
+  <a href="https://github.com/HaoZeke/eon_orchestrator/blob/main/docs/source/reference/configuration.rst">Edit this page</a>
+</div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">NEB Orchestrator</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Configuration Reference</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <div class="copy-page-wrapper relative pb-4 lg:absolute lg:top-8 lg:right-6 xl:right-12">
+  <div id="copy-page-trigger">
+    <button
+      type="button"
+      class="js-copy px-3 py-1 inline-flex items-center gap-1"
+      data-url="neb-orchestrator.rgoswami.me/_sources/reference/configuration.rst.txt"
+    >
+      <i class="i-lucide" data-icon="copy"></i>
+      <span>Copy page</span>
+    </button>
+    <button class="js-menu px-2 py-1" type="button" aria-label="More actions"
+      aria-haspopup="menu" aria-expanded="false" aria-controls="copy-page-content">
+      <i class="i-lucide chevron-down"></i>
+    </button>
+  </div>
+  <div id="copy-page-content" role="menu" aria-orientation="vertical" aria-hidden="true">
+    <div role="presentation">
+      <div class="flex flex-col" role="group">
+        <button class="js-copy" type="button" role="menuitem"
+          data-url="neb-orchestrator.rgoswami.me/_sources/reference/configuration.rst.txt">
+          <span class="iconify-icon">
+            <i class="i-lucide" data-icon="copy"></i>
+          </span>
+          <span>Copy page</span>
+        </button>
+        <a role="menuitem" href="neb-orchestrator.rgoswami.me/_sources/reference/configuration.rst.txt" target="_blank" rel="nofollow"><iconify-icon icon="bi:code-slash"></iconify-icon>
+            <span>View Source</span></a><a role="menuitem" href="https://chatgpt.com/?hints=search&q=Read%20neb-orchestrator.rgoswami.me/_sources/reference/configuration.rst.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:openai"></iconify-icon>
+          <span>Open in ChatGPT</span>
+        </a><a role="menuitem" href="https://claude.ai/new?q=Read%20neb-orchestrator.rgoswami.me/_sources/reference/configuration.rst.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:claude"></iconify-icon>
+          <span>Open in Claude</span>
+        </a></div>
+    </div>
+  </div>
+</div><article class="yue dark-code" role="main">
+          <section id="configuration-reference">
+<h1><a class="toc-backref" href="#id12" role="doc-backlink">Configuration Reference</a><a class="headerlink" href="#configuration-reference" title="Link to this heading">¶</a></h1>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">Date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>2026-03-13</p>
+</dd>
+</dl>
+</div></blockquote>
+<nav class="contents" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#configuration-reference" id="id12">Configuration Reference</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id13">1 Configuration Reference</a></p></li>
+<li><p><a class="reference internal" href="#system-definitions" id="id14">2 System Definitions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#systems" id="id15">2.1 <code class="docutils literal notranslate"><span class="pre">systems</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#structure" id="id16">2.1.1 Structure</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id17">2.1.2 Parameters</a></p></li>
+<li><p><a class="reference internal" href="#example" id="id18">2.1.3 Example</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#model-configuration" id="id19">3 Model Configuration</a></p>
+<ul>
+<li><p><a class="reference internal" href="#model" id="id20">3.1 <code class="docutils literal notranslate"><span class="pre">model</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id21">3.1.1 Parameters</a></p></li>
+<li><p><a class="reference internal" href="#available-models" id="id22">3.1.2 Available Models</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id23">3.1.3 Example</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#compute-settings" id="id24">4 Compute Settings</a></p>
+<ul>
+<li><p><a class="reference internal" href="#compute" id="id25">4.1 <code class="docutils literal notranslate"><span class="pre">compute</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id26">4.1.1 Parameters</a></p></li>
+<li><p><a class="reference internal" href="#device-selection" id="id27">4.1.2 Device Selection</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id28">4.1.3 Example</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#alignment-parameters" id="id29">5 Alignment Parameters</a></p>
+<ul>
+<li><p><a class="reference internal" href="#alignment" id="id30">5.1 <code class="docutils literal notranslate"><span class="pre">alignment</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#id6" id="id31">5.1.1 Parameters</a></p></li>
+<li><p><a class="reference internal" href="#guidelines" id="id32">5.1.2 Guidelines</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id33">5.1.3 Example</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#neb-parameters" id="id34">6 NEB Parameters</a></p>
+<ul>
+<li><p><a class="reference internal" href="#neb" id="id35">6.1 <code class="docutils literal notranslate"><span class="pre">neb</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#neb-minimization" id="id36">6.1.1 <code class="docutils literal notranslate"><span class="pre">neb.minimization</span></code></a></p></li>
+<li><p><a class="reference internal" href="#neb-optimization" id="id37">6.1.2 <code class="docutils literal notranslate"><span class="pre">neb.optimization</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#energy-weighted-springs" id="id38">6.1.2.1 Energy-Weighted Springs</a></p></li>
+<li><p><a class="reference internal" href="#climbing-image" id="id39">6.1.2.2 Climbing Image</a></p></li>
+<li><p><a class="reference internal" href="#mmf-refinement" id="id40">6.1.2.3 MMF Refinement</a></p></li>
+<li><p><a class="reference internal" href="#sidpp-initializer" id="id41">6.1.2.4 SIDPP Initializer</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#neb-idpp" id="id42">6.1.3 <code class="docutils literal notranslate"><span class="pre">neb.idpp</span></code></a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id43">6.1.4 Example</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#visualization-parameters" id="id44">7 Visualization Parameters</a></p>
+<ul>
+<li><p><a class="reference internal" href="#plotting" id="id45">7.1 <code class="docutils literal notranslate"><span class="pre">plotting</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#general" id="id46">7.1.1 General</a></p></li>
+<li><p><a class="reference internal" href="#figure-settings" id="id47">7.1.2 Figure Settings</a></p></li>
+<li><p><a class="reference internal" href="#fonts" id="id48">7.1.3 Fonts</a></p></li>
+<li><p><a class="reference internal" href="#structure-overlays" id="id49">7.1.4 Structure Overlays</a></p></li>
+<li><p><a class="reference internal" href="#advanced" id="id50">7.1.5 Advanced</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id51">7.1.6 Example</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#path-configuration" id="id52">8 Path Configuration</a></p>
+<ul>
+<li><p><a class="reference internal" href="#paths" id="id53">8.1 <code class="docutils literal notranslate"><span class="pre">paths</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#id10" id="id54">8.1.1 Parameters</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id55">8.1.2 Example</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#complete-configuration-example" id="id56">9 Complete Configuration Example</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="id1">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">1 Configuration Reference</a><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Complete reference for <code class="docutils literal notranslate"><span class="pre">config/config.yaml</span></code> parameters.</p>
+</section>
+<section id="system-definitions">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">2 System Definitions</a><a class="headerlink" href="#system-definitions" title="Link to this heading">¶</a></h2>
+<section id="systems">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">2.1 <code class="docutils literal notranslate"><span class="pre">systems</span></code></a><a class="headerlink" href="#systems" title="Link to this heading">¶</a></h3>
+<p>Dictionary of chemical systems to process.</p>
+<section id="structure">
+<h4><a class="toc-backref" href="#id16" role="doc-backlink">2.1.1 Structure</a><a class="headerlink" href="#structure" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">systems</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">system_name</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">    </span><span class="nt">reactant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">structures/reactant.con</span><span class="w">  </span><span class="c1"># Path to reactant .con file</span>
+</span><span data-line="4"><span class="w">    </span><span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">structures/product.con</span><span class="w">    </span><span class="c1"># Path to product .con file</span>
+</span><span data-line="5"><span class="w">    </span><span class="nt">use_ira</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="6"><span class="w">    </span><span class="nt">saddle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">structures/saddle.con</span><span class="w">  </span><span class="c1"># Optional: for 2D plots</span>
+</span></pre></div>
+</div>
+</section>
+<section id="parameters">
+<h4><a class="toc-backref" href="#id17" role="doc-backlink">2.1.2 Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reactant</span></code></p></td>
+<td><p>string</p></td>
+<td><p>Yes</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Path to reactant .con file</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">product</span></code></p></td>
+<td><p>string</p></td>
+<td><p>Yes</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Path to product .con file</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_ira</span></code></p></td>
+<td><p>boolean</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>Enable IRA alignment</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">saddle</span></code></p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Path to saddle point (for 2D plots)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="example">
+<h4><a class="toc-backref" href="#id18" role="doc-backlink">2.1.3 Example</a><a class="headerlink" href="#example" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">systems</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">hcn_isom</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">    </span><span class="nt">reactant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/hcn.con</span>
+</span><span data-line="4"><span class="w">    </span><span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/hnc.con</span>
+</span><span data-line="5"><span class="w">    </span><span class="nt">use_ira</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="w">  </span><span class="nt">proton_transfer</span><span class="p">:</span>
+</span><span data-line="8"><span class="w">    </span><span class="nt">reactant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/pt_reactant.con</span>
+</span><span data-line="9"><span class="w">    </span><span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/pt_product.con</span>
+</span><span data-line="10"><span class="w">    </span><span class="nt">use_ira</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="11"><span class="w">    </span><span class="nt">saddle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/pt_saddle.con</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="model-configuration">
+<h2><a class="toc-backref" href="#id19" role="doc-backlink">3 Model Configuration</a><a class="headerlink" href="#model-configuration" title="Link to this heading">¶</a></h2>
+<section id="model">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">3.1 <code class="docutils literal notranslate"><span class="pre">model</span></code></a><a class="headerlink" href="#model" title="Link to this heading">¶</a></h3>
+<p>Machine learning potential settings.</p>
+<section id="id2">
+<h4><a class="toc-backref" href="#id21" role="doc-backlink">3.1.1 Parameters</a><a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>string</p></td>
+<td><p>Yes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pet-mad-v1.1.0</span></code></p></td>
+<td><p>Model filename</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
+<td><p>string</p></td>
+<td><p>Yes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">v1.1.0</span></code></p></td>
+<td><p>HuggingFace version tag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">type</span></code></p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pet-mad</span></code></p></td>
+<td><p>Model type (<code class="docutils literal notranslate"><span class="pre">pet-mad</span></code> or <code class="docutils literal notranslate"><span class="pre">upet</span></code>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="available-models">
+<h4><a class="toc-backref" href="#id22" role="doc-backlink">3.1.2 Available Models</a><a class="headerlink" href="#available-models" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pet-mad-v1.1.0</span></code>: PET-MAD v1.1.0 (recommended)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pet-mad-v1.0.0</span></code>: PET-MAD v1.0.0 (legacy)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">upet</span></code>: Universal PET (experimental)</p></li>
+</ul>
+</section>
+<section id="id3">
+<h4><a class="toc-backref" href="#id23" role="doc-backlink">3.1.3 Example</a><a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">model</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pet-mad-v1.1.0</span>
+</span><span data-line="3"><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.1.0</span>
+</span><span data-line="4"><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pet-mad</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="compute-settings">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">4 Compute Settings</a><a class="headerlink" href="#compute-settings" title="Link to this heading">¶</a></h2>
+<section id="compute">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">4.1 <code class="docutils literal notranslate"><span class="pre">compute</span></code></a><a class="headerlink" href="#compute" title="Link to this heading">¶</a></h3>
+<p>Hardware and device configuration.</p>
+<section id="id4">
+<h4><a class="toc-backref" href="#id26" role="doc-backlink">4.1.1 Parameters</a><a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Options</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">device</span></code></p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cuda</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cuda</span></code>, <code class="docutils literal notranslate"><span class="pre">cpu</span></code>, <code class="docutils literal notranslate"><span class="pre">mps</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="device-selection">
+<h4><a class="toc-backref" href="#id27" role="doc-backlink">4.1.2 Device Selection</a><a class="headerlink" href="#device-selection" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cuda</span></code>: NVIDIA GPU (recommended for performance)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpu</span></code>: CPU-only (slower but universally available)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mps</span></code>: Apple Silicon (M1/M2/M3)</p></li>
+</ul>
+</section>
+<section id="id5">
+<h4><a class="toc-backref" href="#id28" role="doc-backlink">4.1.3 Example</a><a class="headerlink" href="#id5" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">compute</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cuda</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="alignment-parameters">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">5 Alignment Parameters</a><a class="headerlink" href="#alignment-parameters" title="Link to this heading">¶</a></h2>
+<section id="alignment">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">5.1 <code class="docutils literal notranslate"><span class="pre">alignment</span></code></a><a class="headerlink" href="#alignment" title="Link to this heading">¶</a></h3>
+<p>IRA (Iterative Rotational Alignment) settings.</p>
+<section id="id6">
+<h4><a class="toc-backref" href="#id31" role="doc-backlink">5.1.1 Parameters</a><a class="headerlink" href="#id6" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Range</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kmax</span></code></p></td>
+<td><p>float</p></td>
+<td><p>No</p></td>
+<td><p>1.8</p></td>
+<td><p>1.0-14.0</p></td>
+<td><p>Rotation matching cutoff (Å⁻¹)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="guidelines">
+<h4><a class="toc-backref" href="#id32" role="doc-backlink">5.1.2 Guidelines</a><a class="headerlink" href="#guidelines" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong>Small molecules</strong> (&lt;20 atoms): 1.5-2.0 Å⁻¹</p></li>
+<li><p><strong>Medium molecules</strong> (20-50 atoms): 2.0-3.0 Å⁻¹</p></li>
+<li><p><strong>Difficult systems</strong>: 3.0-5.0 Å⁻¹</p></li>
+<li><p><strong>2D visualization</strong>: 14 Å⁻¹ (fixed)</p></li>
+</ul>
+</section>
+<section id="id7">
+<h4><a class="toc-backref" href="#id33" role="doc-backlink">5.1.3 Example</a><a class="headerlink" href="#id7" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">alignment</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">kmax</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.8</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="neb-parameters">
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">6 NEB Parameters</a><a class="headerlink" href="#neb-parameters" title="Link to this heading">¶</a></h2>
+<section id="neb">
+<h3><a class="toc-backref" href="#id35" role="doc-backlink">6.1 <code class="docutils literal notranslate"><span class="pre">neb</span></code></a><a class="headerlink" href="#neb" title="Link to this heading">¶</a></h3>
+<p>Complete NEB calculation settings.</p>
+<section id="neb-minimization">
+<h4><a class="toc-backref" href="#id36" role="doc-backlink">6.1.1 <code class="docutils literal notranslate"><span class="pre">neb.minimization</span></code></a><a class="headerlink" href="#neb-minimization" title="Link to this heading">¶</a></h4>
+<p>Endpoint geometry optimization.</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_iterations</span></code></p></td>
+<td><p>int</p></td>
+<td><p>2000</p></td>
+<td><p>Maximum optimization steps</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">converged_force</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.0514221</p></td>
+<td><p>Force threshold (eV/Å)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">opt_method</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">lbfgs</span></code></p></td>
+<td><p>Optimizer method</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_move</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.1</p></td>
+<td><p>Maximum step size (Å)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="neb-optimization">
+<h4><a class="toc-backref" href="#id37" role="doc-backlink">6.1.2 <code class="docutils literal notranslate"><span class="pre">neb.optimization</span></code></a><a class="headerlink" href="#neb-optimization" title="Link to this heading">¶</a></h4>
+<p>NEB calculation parameters.</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">images</span></code></p></td>
+<td><p>int</p></td>
+<td><p>18</p></td>
+<td><p>Number of NEB images</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_iterations</span></code></p></td>
+<td><p>int</p></td>
+<td><p>1000</p></td>
+<td><p>Maximum NEB iterations</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">converged_force</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.0514221</p></td>
+<td><p>Force threshold (eV/Å)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">opt_method</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">lbfgs</span></code></p></td>
+<td><p>Optimizer method</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_move</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.1</p></td>
+<td><p>Maximum step size (Å)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="energy-weighted-springs">
+<h5><a class="toc-backref" href="#id38" role="doc-backlink">6.1.2.1 Energy-Weighted Springs</a><a class="headerlink" href="#energy-weighted-springs" title="Link to this heading">¶</a></h5>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">energy_weighted</span></code></p></td>
+<td><p>bool</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>Enable energy weighting</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ew_ksp_min</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.972</p></td>
+<td><p>Minimum spring constant (eV/Å²)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ew_ksp_max</span></code></p></td>
+<td><p>float</p></td>
+<td><p>9.72</p></td>
+<td><p>Maximum spring constant (eV/Å²)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ew_trigger</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.5</p></td>
+<td><p>Energy threshold (eV)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="climbing-image">
+<h5><a class="toc-backref" href="#id39" role="doc-backlink">6.1.2.2 Climbing Image</a><a class="headerlink" href="#climbing-image" title="Link to this heading">¶</a></h5>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">climbing_image_method</span></code></p></td>
+<td><p>bool</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>Enable CI method</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ci_after_rel</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.8</p></td>
+<td><p>Relative convergence for CI</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="mmf-refinement">
+<h5><a class="toc-backref" href="#id40" role="doc-backlink">6.1.2.3 MMF Refinement</a><a class="headerlink" href="#mmf-refinement" title="Link to this heading">¶</a></h5>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ci_mmf</span></code></p></td>
+<td><p>bool</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>Enable MMF at CI</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ci_mmf_nsteps</span></code></p></td>
+<td><p>int</p></td>
+<td><p>1000</p></td>
+<td><p>MMF refinement steps</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="sidpp-initializer">
+<h5><a class="toc-backref" href="#id41" role="doc-backlink">6.1.2.4 SIDPP Initializer</a><a class="headerlink" href="#sidpp-initializer" title="Link to this heading">¶</a></h5>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sidpp_growth_alpha</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.33</p></td>
+<td><p>Path growth step size</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="neb-idpp">
+<h4><a class="toc-backref" href="#id42" role="doc-backlink">6.1.3 <code class="docutils literal notranslate"><span class="pre">neb.idpp</span></code></a><a class="headerlink" href="#neb-idpp" title="Link to this heading">¶</a></h4>
+<p>Legacy IDPP path generation (optional).</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">number_of_intermediate_imgs</span></code></p></td>
+<td><p>int</p></td>
+<td><p>10</p></td>
+<td><p>Intermediate images</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id8">
+<h4><a class="toc-backref" href="#id43" role="doc-backlink">6.1.4 Example</a><a class="headerlink" href="#id8" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">neb</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">minimization</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">    </span><span class="nt">max_iterations</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000</span>
+</span><span data-line="4"><span class="w">    </span><span class="nt">converged_force</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0514221</span>
+</span><span data-line="5"><span class="w">    </span><span class="nt">opt_method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lbfgs</span>
+</span><span data-line="6"><span class="w">    </span><span class="nt">max_move</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="w">  </span><span class="nt">optimization</span><span class="p">:</span>
+</span><span data-line="9"><span class="w">    </span><span class="nt">images</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">18</span>
+</span><span data-line="10"><span class="w">    </span><span class="nt">max_iterations</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+</span><span data-line="11"><span class="w">    </span><span class="nt">converged_force</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0514221</span>
+</span><span data-line="12"><span class="w">    </span><span class="nt">opt_method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lbfgs</span>
+</span><span data-line="13"><span class="w">    </span><span class="nt">max_move</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+</span><span data-line="14">
+</span><span data-line="15"><span class="w">    </span><span class="nt">energy_weighted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="16"><span class="w">    </span><span class="nt">ew_ksp_min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.972</span>
+</span><span data-line="17"><span class="w">    </span><span class="nt">ew_ksp_max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9.72</span>
+</span><span data-line="18"><span class="w">    </span><span class="nt">ew_trigger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+</span><span data-line="19">
+</span><span data-line="20"><span class="w">    </span><span class="nt">climbing_image_method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="21"><span class="w">    </span><span class="nt">ci_after_rel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
+</span><span data-line="22">
+</span><span data-line="23"><span class="w">    </span><span class="nt">ci_mmf</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="24"><span class="w">    </span><span class="nt">ci_mmf_nsteps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+</span><span data-line="25">
+</span><span data-line="26"><span class="w">    </span><span class="nt">sidpp_growth_alpha</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.33</span>
+</span><span data-line="27">
+</span><span data-line="28"><span class="w">  </span><span class="nt">idpp</span><span class="p">:</span>
+</span><span data-line="29"><span class="w">    </span><span class="nt">number_of_intermediate_imgs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="visualization-parameters">
+<h2><a class="toc-backref" href="#id44" role="doc-backlink">7 Visualization Parameters</a><a class="headerlink" href="#visualization-parameters" title="Link to this heading">¶</a></h2>
+<section id="plotting">
+<h3><a class="toc-backref" href="#id45" role="doc-backlink">7.1 <code class="docutils literal notranslate"><span class="pre">plotting</span></code></a><a class="headerlink" href="#plotting" title="Link to this heading">¶</a></h3>
+<p>Plot generation settings.</p>
+<section id="general">
+<h4><a class="toc-backref" href="#id46" role="doc-backlink">7.1.1 General</a><a class="headerlink" href="#general" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plot_structures</span></code></p></td>
+<td><p>bool</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>Overlay atomic structures</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">facecolor</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">white</span></code></p></td>
+<td><p>Background color</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">title</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p>Plot title prefix</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="figure-settings">
+<h4><a class="toc-backref" href="#id47" role="doc-backlink">7.1.2 Figure Settings</a><a class="headerlink" href="#figure-settings" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">figsize</span></code></p></td>
+<td><p>list</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[8,</span> <span class="pre">6]</span></code></p></td>
+<td><p>Figure size (inches)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dpi</span></code></p></td>
+<td><p>int</p></td>
+<td><p>300</p></td>
+<td><p>Output resolution</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">zoom_ratio</span></code></p></td>
+<td><p>float</p></td>
+<td><p>1.0</p></td>
+<td><p>Structure zoom factor</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="fonts">
+<h4><a class="toc-backref" href="#id48" role="doc-backlink">7.1.3 Fonts</a><a class="headerlink" href="#fonts" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">base</span></code></p></td>
+<td><p>int</p></td>
+<td><p>12</p></td>
+<td><p>Base font size</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="structure-overlays">
+<h4><a class="toc-backref" href="#id49" role="doc-backlink">7.1.4 Structure Overlays</a><a class="headerlink" href="#structure-overlays" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">draw_reactant.x</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.2</p></td>
+<td><p>X position (normalized)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">draw_reactant.y</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.1</p></td>
+<td><p>Y position (normalized)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">draw_reactant.rad</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.15</p></td>
+<td><p>Circle radius</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">draw_product.x</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.8</p></td>
+<td><p>X position</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">draw_product.y</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.1</p></td>
+<td><p>Y position</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">draw_product.rad</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.15</p></td>
+<td><p>Circle radius</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">draw_saddle.x</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.5</p></td>
+<td><p>X position</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">draw_saddle.y</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.6</p></td>
+<td><p>Y position</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">draw_saddle.rad</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.15</p></td>
+<td><p>Circle radius</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="advanced">
+<h4><a class="toc-backref" href="#id50" role="doc-backlink">7.1.5 Advanced</a><a class="headerlink" href="#advanced" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ira_kmax</span></code></p></td>
+<td><p>float</p></td>
+<td><p>14</p></td>
+<td><p>IRA kmax for 2D plots</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">aserot</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0</p></td>
+<td><p>ASE rotation (degrees)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id9">
+<h4><a class="toc-backref" href="#id51" role="doc-backlink">7.1.6 Example</a><a class="headerlink" href="#id9" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">plotting</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">plot_structures</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="3"><span class="w">  </span><span class="nt">facecolor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+</span><span data-line="4"><span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HCN</span><span class="nv"> </span><span class="s">→</span><span class="nv"> </span><span class="s">HNC&quot;</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="w">  </span><span class="nt">figure</span><span class="p">:</span>
+</span><span data-line="7"><span class="w">    </span><span class="nt">figsize</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6</span><span class="p p-Indicator">]</span>
+</span><span data-line="8"><span class="w">    </span><span class="nt">dpi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+</span><span data-line="9"><span class="w">    </span><span class="nt">zoom_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+</span><span data-line="10">
+</span><span data-line="11"><span class="w">  </span><span class="nt">fonts</span><span class="p">:</span>
+</span><span data-line="12"><span class="w">    </span><span class="nt">base</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12</span>
+</span><span data-line="13">
+</span><span data-line="14"><span class="w">  </span><span class="nt">draw_reactant</span><span class="p">:</span>
+</span><span data-line="15"><span class="w">    </span><span class="nt">x</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.2</span>
+</span><span data-line="16"><span class="w">    </span><span class="nt">y</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+</span><span data-line="17"><span class="w">    </span><span class="nt">rad</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.15</span>
+</span><span data-line="18">
+</span><span data-line="19"><span class="w">  </span><span class="nt">draw_product</span><span class="p">:</span>
+</span><span data-line="20"><span class="w">    </span><span class="nt">x</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
+</span><span data-line="21"><span class="w">    </span><span class="nt">y</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+</span><span data-line="22"><span class="w">    </span><span class="nt">rad</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.15</span>
+</span><span data-line="23">
+</span><span data-line="24"><span class="w">  </span><span class="nt">draw_saddle</span><span class="p">:</span>
+</span><span data-line="25"><span class="w">    </span><span class="nt">x</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+</span><span data-line="26"><span class="w">    </span><span class="nt">y</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.6</span>
+</span><span data-line="27"><span class="w">    </span><span class="nt">rad</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.15</span>
+</span><span data-line="28">
+</span><span data-line="29"><span class="w">  </span><span class="nt">ira_kmax</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">14</span>
+</span><span data-line="30"><span class="w">  </span><span class="nt">aserot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="path-configuration">
+<h2><a class="toc-backref" href="#id52" role="doc-backlink">8 Path Configuration</a><a class="headerlink" href="#path-configuration" title="Link to this heading">¶</a></h2>
+<section id="paths">
+<h3><a class="toc-backref" href="#id53" role="doc-backlink">8.1 <code class="docutils literal notranslate"><span class="pre">paths</span></code></a><a class="headerlink" href="#paths" title="Link to this heading">¶</a></h3>
+<p>Output directory structure.</p>
+<section id="id10">
+<h4><a class="toc-backref" href="#id54" role="doc-backlink">8.1.1 Parameters</a><a class="headerlink" href="#id10" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">models</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">results/models</span></code></p></td>
+<td><p>ML potential storage</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">endpoints</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">results/endpoints</span></code></p></td>
+<td><p>Endpoint structures</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">neb</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">results/neb</span></code></p></td>
+<td><p>NEB outputs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">idpp</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">results/idpp</span></code></p></td>
+<td><p>IDPP paths</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plots</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">results/plots</span></code></p></td>
+<td><p>Visualization outputs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cache</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">results/cache</span></code></p></td>
+<td><p>Cache files</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id11">
+<h4><a class="toc-backref" href="#id55" role="doc-backlink">8.1.2 Example</a><a class="headerlink" href="#id11" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">paths</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">models</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/models</span>
+</span><span data-line="3"><span class="w">  </span><span class="nt">endpoints</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/endpoints</span>
+</span><span data-line="4"><span class="w">  </span><span class="nt">neb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/neb</span>
+</span><span data-line="5"><span class="w">  </span><span class="nt">idpp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/idpp</span>
+</span><span data-line="6"><span class="w">  </span><span class="nt">plots</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/plots</span>
+</span><span data-line="7"><span class="w">  </span><span class="nt">cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/cache</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="complete-configuration-example">
+<h2><a class="toc-backref" href="#id56" role="doc-backlink">9 Complete Configuration Example</a><a class="headerlink" href="#complete-configuration-example" title="Link to this heading">¶</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">systems</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">hcn_isom</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">    </span><span class="nt">reactant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/hcn.con</span>
+</span><span data-line="4"><span class="w">    </span><span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/hnc.con</span>
+</span><span data-line="5"><span class="w">    </span><span class="nt">use_ira</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="nt">model</span><span class="p">:</span>
+</span><span data-line="8"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pet-mad-v1.1.0</span>
+</span><span data-line="9"><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.1.0</span>
+</span><span data-line="10"><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pet-mad</span>
+</span><span data-line="11">
+</span><span data-line="12"><span class="nt">compute</span><span class="p">:</span>
+</span><span data-line="13"><span class="w">  </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cuda</span>
+</span><span data-line="14">
+</span><span data-line="15"><span class="nt">alignment</span><span class="p">:</span>
+</span><span data-line="16"><span class="w">  </span><span class="nt">kmax</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.8</span>
+</span><span data-line="17">
+</span><span data-line="18"><span class="nt">neb</span><span class="p">:</span>
+</span><span data-line="19"><span class="w">  </span><span class="nt">minimization</span><span class="p">:</span>
+</span><span data-line="20"><span class="w">    </span><span class="nt">max_iterations</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000</span>
+</span><span data-line="21"><span class="w">    </span><span class="nt">converged_force</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0514221</span>
+</span><span data-line="22"><span class="w">    </span><span class="nt">opt_method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lbfgs</span>
+</span><span data-line="23"><span class="w">    </span><span class="nt">max_move</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+</span><span data-line="24">
+</span><span data-line="25"><span class="w">  </span><span class="nt">optimization</span><span class="p">:</span>
+</span><span data-line="26"><span class="w">    </span><span class="nt">images</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">18</span>
+</span><span data-line="27"><span class="w">    </span><span class="nt">max_iterations</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+</span><span data-line="28"><span class="w">    </span><span class="nt">converged_force</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0514221</span>
+</span><span data-line="29"><span class="w">    </span><span class="nt">energy_weighted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="30"><span class="w">    </span><span class="nt">ew_ksp_min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.972</span>
+</span><span data-line="31"><span class="w">    </span><span class="nt">ew_ksp_max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9.72</span>
+</span><span data-line="32"><span class="w">    </span><span class="nt">climbing_image_method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="33"><span class="w">    </span><span class="nt">ci_mmf</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="34"><span class="w">    </span><span class="nt">sidpp_growth_alpha</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.33</span>
+</span><span data-line="35">
+</span><span data-line="36"><span class="nt">plotting</span><span class="p">:</span>
+</span><span data-line="37"><span class="w">  </span><span class="nt">plot_structures</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="38"><span class="w">  </span><span class="nt">figure</span><span class="p">:</span>
+</span><span data-line="39"><span class="w">    </span><span class="nt">figsize</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6</span><span class="p p-Indicator">]</span>
+</span><span data-line="40"><span class="w">    </span><span class="nt">dpi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+</span><span data-line="41">
+</span><span data-line="42"><span class="nt">paths</span><span class="p">:</span>
+</span><span data-line="43"><span class="w">  </span><span class="nt">models</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/models</span>
+</span><span data-line="44"><span class="w">  </span><span class="nt">endpoints</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/endpoints</span>
+</span><span data-line="45"><span class="w">  </span><span class="nt">neb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/neb</span>
+</span><span data-line="46"><span class="w">  </span><span class="nt">plots</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results/plots</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="../parameter_guide.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Parameter Selection Guide</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="../contributing/index.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Contributing Guide</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--sy-c-text-weak);
+        font-size: 0.9em;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 1rem;
+          align-items: center;
+        "
+      >
+        
+        <span style="display: inline-flex; align-items: center; gap: 0.3em">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M7,20H4V4h3V20z M14,20h-3V12h3V20z M21,20h-3V8h3V20z" />
+          </svg>
+          <span
+            >Analytics by
+            <a
+              href="https://umami.is/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="color: inherit; text-decoration: underline"
+              >Umami</a
+            ></span
+          >
+        </span>
+
+        
+        <span style="display: inline-flex; align-items: center; gap: 0.3em">
+          <span>provided by</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.3em">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1.2em"
+              height="1.2em"
+              viewBox="0 0 64 64"
+              aria-hidden="true"
+            >
+              <g fill-rule="evenodd">
+                <ellipse cx="32" cy="11" fill="#80D25B" rx="7" ry="9" />
+                <path
+                  fill="#80D25B"
+                  d="M20.302104,46 C20.302104,46 17.1330329,55.8812548 20.6828149,59.7817355 C24.232597,63.6822162 26.8008673,63.215359 26.8008673,53.7414927 C26.8008673,44.2676263 20.302104,46 20.302104,46 Z"
+                />
+                <path
+                  fill="#80D25B"
+                  d="M38.302104,46 C38.302104,46 35.1330329,55.8812548 38.6828149,59.7817355 C42.232597,63.6822162 44.8008673,63.215359 44.8008673,53.7414927 C44.8008673,44.2676263 38.302104,46 38.302104,46 Z"
+                  transform="matrix(-1 0 0 1 81.8 0)"
+                />
+                <path
+                  fill="#80D25B"
+                  d="M20.6227767,21.2218684 C20.6227767,21.2218684 13.956214,15.3844007 10.091955,16.0534044 C6.22769598,16.722408 6,22.2124633 6,23.9992899 C6,25.7861165 7.78917398,37.3159836 9.78726488,36.4967476 C11.7853558,35.6775115 13.7411938,27.959322 13.7411938,27.959322 15.6510232,30.2287702 18.609193,30.4630388"
+                />
+                <path
+                  fill="#80D25B"
+                  d="M57.6227767,21.2218684 C57.6227767,21.2218684 50.956214,15.3844007 47.091955,16.0534044 C43.227696,16.722408 43,22.2124633 43,23.9992899 C43,25.7861165 44.789174,37.3159836 46.7872649,36.4967476 C48.7853558,35.6775115 50.7411938,27.959322 50.7411938,27.959322 52.6510232,30.2287702 55.609193,30.4630388"
+                  transform="matrix(-1 0 0 1 100.623 0)"
+                />
+                <path
+                  fill="#BD7575"
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M32,53 C40.836556,53 48,44.4934102 48,34 C48,23.5065898 46.6814044,17 32,17 C17.3185956,17 16,23.5065898 16,34 C16,44.4934102 23.163444,53 32,53 Z"
+                />
+                <polygon
+                  fill="#BD7575"
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  points="32 22 38.928 26 38.928 34 32 38 25.072 34 25.072 26"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M30,8 C28.8954305,8 28,8.8954305 28,10"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M36,8 C34.8954305,8 34,8.8954305 34,10"
+                  transform="matrix(-1 0 0 1 70 0)"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M32.1194396 38.1881507L32.1194396 52.4125899M32.0164956 21.7467197L32.0164956 17M25.2141026 26.0041506L17.737148 23.0721126M25.1254173 34.1534318L16.7659494 38.8876521"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M46.2141026,26.0041506 L38.737148,23.0721126"
+                  transform="matrix(-1 0 0 1 84.951 0)"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M47.1254173,34.1534318 L38.7659494,38.8876521"
+                  transform="matrix(-1 0 0 1 85.891 0)"
+                />
+              </g>
+            </svg>
+            <a
+              href="https://turtletech.us/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="color: inherit; text-decoration: underline"
+              >TurtleTech ehf</a
+            >
+          </span>
+        </span>
+      </div>
+    </div>
+
+    
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, NEB Orchestrator Team, TurtleTech ehf</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div> <div class="sy-foot-socials">
+<a href="https://github.com/HaoZeke/eon_orchestrator" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/shibuya.js?v=cac61aee"></script></body>
+</html>

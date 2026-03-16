@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Parameter Selection Guide - NEB Orchestrator documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Configuration Reference" href="reference/configuration.html" /><link rel="prev" title="Adding Your Own System" href="tutorials/adding_systems.html" />
+      <link rel="canonical" href="neb-orchestrator.rgoswami.me/parameter_guide.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=a318c5d4" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/>
+  <meta property="og:url" content="neb-orchestrator.rgoswami.me/parameter_guide.html"/>
+  <meta property="og:title" content="Parameter Selection Guide"/>
+    <meta name="twitter:card" content="summary"/>
+  <!-- Manual favicon handling with favicon.io -->
+<!-- since sphinx-favicon doesn't work with shibuya -->
+<link rel="icon" type="image/png" sizes="16x16" href="_static/favicons/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="_static/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="_static/favicons/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="_static/favicons/android-chrome-512x512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="_static/favicons/apple-touch-icon.png">
+<link rel="shortcut icon" href="_static/favicons/favicon.ico">
+<link rel="manifest" href="_static/favicons/site.webmanifest">
+<!-- Umami analytics -->
+<script defer src="https://analytics.turtletech.us/script.js" data-website-id="fe91a76b-5f16-4b7b-97cc-d0afe09a8b9a"></script>
+<script>window.umami=window.umami||{track:function(){}};document.addEventListener('click',function(e){var a=e.target.closest('a');if(a&&a.hostname!==location.hostname)umami.track('Outbound Link',{url:a.href})});</script></head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      
+      
+      <strong>NEB Orchestrator</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul>
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-1" aria-controls="nav-children-1">
+            <span>Ecosystem</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul id="nav-children-1" aria-labelledby="nav-trigger-1"><li><a href="https://eondocs.org">
+                <span>eOn</span>
+                <small>Nudged Elastic Band engine</small>
+              </a></li><li><a href="https://huggingface.co/lab-cosmo/pet-mad">
+                <span>PET-MAD</span>
+                <small>Machine learning potential</small>
+              </a></li><li><a href="https://rgpycrumbs.rgoswami.me">
+                <span>rgpycrumbs</span>
+                <small>Alignment and visualization tools</small>
+              </a></li></ul>
+      </li><li class="link">
+          <a href="https://pypi.org/project/eon-orchestrator/">
+            <span>PyPI</span><i class="i-lucide external-link"></i></a>
+        </li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/HaoZeke/eon_orchestrator" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="1"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1 _expand"><a class="reference internal" href="quickstart.html">Quickstart Guide</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="tutorials/index.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/hcn.html">HCN Isomerization Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/sn2.html">Sn2 Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/vinyl_alcohol.html">Vinyl<sub>alcohol</sub>Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/diels_alder.html">Diels<sub>alder</sub>Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/adding_systems.html">Adding Your Own System</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Parameter Selection Guide</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="reference/configuration.html">Configuration Reference</a></li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1 _expand"><a class="reference internal" href="contributing/index.html">Contributing Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+</li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="devnotes.html">Developer Notes</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1 _expand"><a class="reference internal" href="citation.html">How to Cite NEB Orchestrator</a></li>
+<li class="toctree-l1 _expand"><a class="reference internal" href="used_by.html">Used By</a></li>
+</ul>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#overview">1 Overview</a></li>
+<li><a class="reference internal" href="#recommended-parameters-by-system-type">2 Recommended Parameters by System Type</a></li>
+<li><a class="reference internal" href="#parameter-descriptions">3 Parameter Descriptions</a><ul>
+<li><a class="reference internal" href="#ira-kmax-a1">3.1 IRA kmax (&#197;&#8315;&#185;)</a></li>
+<li><a class="reference internal" href="#number-of-neb-images">3.2 Number of NEB Images</a></li>
+<li><a class="reference internal" href="#force-convergence-threshold-ev-a">3.3 Force Convergence Threshold (eV/&#197;)</a></li>
+<li><a class="reference internal" href="#cell-size-a">3.4 Cell Size (&#197;)</a></li>
+<li><a class="reference internal" href="#sidpp-growth">3.5 SIDPP Growth &#945;</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#decision-framework">4 Decision Framework</a></li>
+<li><a class="reference internal" href="#why-not-bayesian-optimization">5 Why Not Bayesian Optimization?</a><ul>
+<li><a class="reference internal" href="#the-temptation">5.1 The Temptation**</a></li>
+<li><a class="reference internal" href="#why-it-doesn-t-work-here">5.2 Why It Doesn&#8217;t Work Here**</a></li>
+<li><a class="reference internal" href="#when-bayesian-optimization-would-help">5.3 When Bayesian Optimization <strong>Would</strong> Help**</a></li>
+<li><a class="reference internal" href="#current-best-approach">5.4 Current Best Approach**</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples-by-reaction-class">6 Examples by Reaction Class</a><ul>
+<li><a class="reference internal" href="#proton-transfer-h-transfer">6.1 Proton Transfer (H-transfer)</a></li>
+<li><a class="reference internal" href="#pericyclic-reactions-claisen-cope-diels-alder">6.2 Pericyclic Reactions (Claisen, Cope, Diels-Alder)</a></li>
+<li><a class="reference internal" href="#isomerization-simple">6.3 Isomerization (Simple)</a></li>
+<li><a class="reference internal" href="#surface-reactions">6.4 Surface Reactions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#troubleshooting">7 Troubleshooting</a><ul>
+<li><a class="reference internal" href="#problem-ira-alignment-fails">7.1 Problem: IRA alignment fails**</a></li>
+<li><a class="reference internal" href="#problem-idpp-path-has-collisions">7.2 Problem: IDPP path has collisions**</a></li>
+<li><a class="reference internal" href="#problem-neb-doesn-t-converge">7.3 Problem: NEB doesn&#8217;t converge**</a></li>
+<li><a class="reference internal" href="#problem-wrong-saddle-point">7.4 Problem: Wrong saddle point**</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">8 References</a></li>
+<li><a class="reference internal" href="#see-also">9 See Also</a></li>
+</ul>
+</div><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/HaoZeke/eon_orchestrator"
+  data-type="github" data-user="HaoZeke" data-repo="eon_orchestrator">
+  <span class="w-8 flex items-center justify-around shrink-0 text-3xl">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </span>
+  <span class="flex-grow px-2 break-all">
+    
+    
+      <span>eon_orchestrator</span>
+    
+    <span class="flex text-sm repo-stats-count">
+      <span class="flex items-center pr-3">
+        <iconify-icon icon="lucide:star"></iconify-icon>
+        <strong class="js-repo-stars ml-1">0</strong>
+      </span>
+      <span class="flex items-center">
+        <iconify-icon icon="lucide:git-fork"></iconify-icon>
+        <strong class="js-repo-forks ml-1">0</strong>
+      </span>
+    </span>
+  </span>
+</a><div class="edit-this-page">
+  <a href="https://github.com/HaoZeke/eon_orchestrator/blob/main/docs/source/parameter_guide.rst">Edit this page</a>
+</div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">NEB Orchestrator</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Parameter Selection Guide</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <div class="copy-page-wrapper relative pb-4 lg:absolute lg:top-8 lg:right-6 xl:right-12">
+  <div id="copy-page-trigger">
+    <button
+      type="button"
+      class="js-copy px-3 py-1 inline-flex items-center gap-1"
+      data-url="neb-orchestrator.rgoswami.me/_sources/parameter_guide.rst.txt"
+    >
+      <i class="i-lucide" data-icon="copy"></i>
+      <span>Copy page</span>
+    </button>
+    <button class="js-menu px-2 py-1" type="button" aria-label="More actions"
+      aria-haspopup="menu" aria-expanded="false" aria-controls="copy-page-content">
+      <i class="i-lucide chevron-down"></i>
+    </button>
+  </div>
+  <div id="copy-page-content" role="menu" aria-orientation="vertical" aria-hidden="true">
+    <div role="presentation">
+      <div class="flex flex-col" role="group">
+        <button class="js-copy" type="button" role="menuitem"
+          data-url="neb-orchestrator.rgoswami.me/_sources/parameter_guide.rst.txt">
+          <span class="iconify-icon">
+            <i class="i-lucide" data-icon="copy"></i>
+          </span>
+          <span>Copy page</span>
+        </button>
+        <a role="menuitem" href="neb-orchestrator.rgoswami.me/_sources/parameter_guide.rst.txt" target="_blank" rel="nofollow"><iconify-icon icon="bi:code-slash"></iconify-icon>
+            <span>View Source</span></a><a role="menuitem" href="https://chatgpt.com/?hints=search&q=Read%20neb-orchestrator.rgoswami.me/_sources/parameter_guide.rst.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:openai"></iconify-icon>
+          <span>Open in ChatGPT</span>
+        </a><a role="menuitem" href="https://claude.ai/new?q=Read%20neb-orchestrator.rgoswami.me/_sources/parameter_guide.rst.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:claude"></iconify-icon>
+          <span>Open in Claude</span>
+        </a></div>
+    </div>
+  </div>
+</div><article class="yue dark-code" role="main">
+          <section id="parameter-selection-guide">
+<h1>Parameter Selection Guide<a class="headerlink" href="#parameter-selection-guide" title="Link to this heading">¶</a></h1>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">Date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>2026-03-13</p>
+</dd>
+</dl>
+</div></blockquote>
+<section id="overview">
+<h2>1 Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>This document provides recommended parameter values for NEB Orchestrator based on system type and reaction class. These are starting points, not universal rules. Visual inspection of results is always required.</p>
+</section>
+<section id="recommended-parameters-by-system-type">
+<h2>2 Recommended Parameters by System Type<a class="headerlink" href="#recommended-parameters-by-system-type" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>System Size</p></th>
+<th class="head"><p>kmax</p></th>
+<th class="head"><p>Images</p></th>
+<th class="head"><p>Force Threshold (eV/Å)</p></th>
+<th class="head"><p>Cell Size (Å)</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>5-20 atoms</p></td>
+<td><p>1.8</p></td>
+<td><p>12-16</p></td>
+<td><p>0.051</p></td>
+<td><p>25³</p></td>
+<td><p>Standard organic molecules</p></td>
+</tr>
+<tr class="row-odd"><td><p>20-50 atoms</p></td>
+<td><p>2.5</p></td>
+<td><p>18-24</p></td>
+<td><p>0.051</p></td>
+<td><p>25³</p></td>
+<td><p>Medium systems</p></td>
+</tr>
+<tr class="row-even"><td><p>50+ atoms</p></td>
+<td><p>3.0</p></td>
+<td><p>24-30</p></td>
+<td><p>0.026</p></td>
+<td><p>30³</p></td>
+<td><p>Large, complex systems</p></td>
+</tr>
+<tr class="row-odd"><td><p>H-transfer</p></td>
+<td><p>1.5</p></td>
+<td><p>12-16</p></td>
+<td><p>0.051</p></td>
+<td><p>25³</p></td>
+<td><p>Soft modes, try multiple kmax</p></td>
+</tr>
+<tr class="row-even"><td><p>Pericyclic</p></td>
+<td><p>2.0</p></td>
+<td><p>18-24</p></td>
+<td><p>0.051</p></td>
+<td><p>25³</p></td>
+<td><p>Inspect path carefully</p></td>
+</tr>
+<tr class="row-odd"><td><p>Surface reactions</p></td>
+<td><p>2.5</p></td>
+<td><p>18-24</p></td>
+<td><p>0.051</p></td>
+<td><p>30³</p></td>
+<td><p>Requires PBC modifications</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="parameter-descriptions">
+<h2>3 Parameter Descriptions<a class="headerlink" href="#parameter-descriptions" title="Link to this heading">¶</a></h2>
+<section id="ira-kmax-a1">
+<h3>3.1 IRA kmax (Å⁻¹)<a class="headerlink" href="#ira-kmax-a1" title="Link to this heading">¶</a></h3>
+<p>Controls permutation matching strictness in Iterative Rotational Alignment.</p>
+<ul class="simple">
+<li><p><strong>Low (1.0-1.5)</strong>: Strict matching, works for well-behaved small molecules</p></li>
+<li><p><strong>Medium (1.5-2.5)</strong>: Default range, balances strictness with flexibility</p></li>
+<li><p><strong>High (2.5-5.0)</strong>: Loose matching for difficult atom mapping, may introduce errors</p></li>
+</ul>
+<p><strong>When to adjust</strong>:</p>
+<ul class="simple">
+<li><p>If IRA fails to find alignment: increase kmax</p></li>
+<li><p>If alignment looks chemically wrong: decrease kmax</p></li>
+<li><p>For symmetric molecules: try multiple values (1.5, 2.0, 2.5)</p></li>
+</ul>
+</section>
+<section id="number-of-neb-images">
+<h3>3.2 Number of NEB Images<a class="headerlink" href="#number-of-neb-images" title="Link to this heading">¶</a></h3>
+<p>Total images including endpoints (reactant + product + intermediates).</p>
+<ul class="simple">
+<li><p><strong>12-16 images</strong>: Simple reactions (single bond break/form)</p></li>
+<li><p><strong>18-24 images</strong>: Moderate complexity (multiple bond changes)</p></li>
+<li><p><strong>24-30 images</strong>: Complex rearrangements (pericyclic, sigmatropic)</p></li>
+</ul>
+<p><strong>Trade-offs</strong>:</p>
+<ul class="simple">
+<li><p>More images → better path resolution, higher computational cost</p></li>
+<li><p>Fewer images → faster, may miss intermediate features</p></li>
+</ul>
+</section>
+<section id="force-convergence-threshold-ev-a">
+<h3>3.3 Force Convergence Threshold (eV/Å)<a class="headerlink" href="#force-convergence-threshold-ev-a" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>0.051 eV/Å</strong> (10⁻³ Ha/Bohr): Standard, sufficient for most applications</p></li>
+<li><p><strong>0.026 eV/Å</strong> (0.5×10⁻³ Ha/Bohr): High precision, kinetics studies</p></li>
+<li><p><strong>0.102 eV/Å</strong> (2×10⁻³ Ha/Bohr): Quick screening, not for publication</p></li>
+</ul>
+</section>
+<section id="cell-size-a">
+<h3>3.4 Cell Size (Å)<a class="headerlink" href="#cell-size-a" title="Link to this heading">¶</a></h3>
+<p>Artificial box size for gas-phase calculations. Must be large enough to avoid periodic boundary artifacts.</p>
+<ul class="simple">
+<li><p><strong>20-25 Å</strong>: Small molecules (&lt;20 atoms)</p></li>
+<li><p><strong>25-30 Å</strong>: Medium molecules (20-50 atoms)</p></li>
+<li><p><strong>30-40 Å</strong>: Large molecules (&gt;50 atoms)</p></li>
+</ul>
+<p><strong>Rule of thumb</strong>: At least 10 Å vacuum between molecule and box edge in all directions.</p>
+</section>
+<section id="sidpp-growth">
+<h3>3.5 SIDPP Growth α<a class="headerlink" href="#sidpp-growth" title="Link to this heading">¶</a></h3>
+<p>Step size for adding new images in Sequential IDPP.</p>
+<ul class="simple">
+<li><p><strong>Default (0.33)</strong>: Works for most systems</p></li>
+<li><p><strong>Lower (0.2-0.3)</strong>: More conservative growth, better for complex reactions</p></li>
+<li><p><strong>Higher (0.4-0.5)</strong>: Faster path generation, may introduce collisions</p></li>
+</ul>
+<p><strong>When to adjust</strong>: If IDPP path has atomic collisions, reduce α.</p>
+</section>
+</section>
+<section id="decision-framework">
+<h2>4 Decision Framework<a class="headerlink" href="#decision-framework" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">Start with defaults for your system size
+</span><span data-line="2">        ↓
+</span><span data-line="3">Run workflow with default parameters
+</span><span data-line="4">        ↓
+</span><span data-line="5">Visualize IDPP path (ase gui results/idpp/*/path/*.xyz)
+</span><span data-line="6">        ↓
+</span><span data-line="7">    ┌───┴───┐
+</span><span data-line="8">    │       │
+</span><span data-line="9">  Good    Bad
+</span><span data-line="10">    │       │
+</span><span data-line="11">    │       └─→ Try different kmax (1.5, 2.0, 2.5)
+</span><span data-line="12">    │           Re-run alignment + IDPP
+</span><span data-line="13">    │           Re-inspect
+</span><span data-line="14">    │
+</span><span data-line="15">    ↓
+</span><span data-line="16">Run full NEB optimization
+</span><span data-line="17">    ↓
+</span><span data-line="18">Validate saddle (dimer search, DFT single-point)
+</span></pre></div>
+</div>
+</section>
+<section id="why-not-bayesian-optimization">
+<h2>5 Why Not Bayesian Optimization?<a class="headerlink" href="#why-not-bayesian-optimization" title="Link to this heading">¶</a></h2>
+<section id="the-temptation">
+<h3>5.1 The Temptation**<a class="headerlink" href="#the-temptation" title="Link to this heading">¶</a></h3>
+<p>It’s natural to ask: “Why not use Optuna or similar tools to automatically find optimal parameters?”</p>
+</section>
+<section id="why-it-doesn-t-work-here">
+<h3>5.2 Why It Doesn’t Work Here**<a class="headerlink" href="#why-it-doesn-t-work-here" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>No automated objective function</strong></p>
+<ul class="simple">
+<li><p>What metric determines “good” parameters?</p></li>
+<li><p>Final energy? → Doesn’t indicate correct mechanism</p></li>
+<li><p>Convergence speed? → Fast convergence to wrong saddle is worse</p></li>
+<li><p>Barrier height? → No reference value for novel reactions</p></li>
+<li><p>Collision count? → Binary (pass/fail), not continuous for optimization</p></li>
+</ul>
+</li>
+<li><p><strong>High computational cost</strong></p>
+<ul class="simple">
+<li><p>Bayesian optimization needs 20-50 trials to beat grid search</p></li>
+<li><p>Each trial = full NEB calculation (hours to days)</p></li>
+<li><p>Total time: weeks of compute vs. hours for 3-value grid search</p></li>
+</ul>
+</li>
+<li><p><strong>Low-dimensional search space</strong></p>
+<ul class="simple">
+<li><p>Only 3-4 meaningful parameters</p></li>
+<li><p>Most have weak sensitivity (SIDPP α)</p></li>
+<li><p>Grid search with 3 values each is sufficient</p></li>
+</ul>
+</li>
+<li><p><strong>Human validation still required</strong></p>
+<ul class="simple">
+<li><p>No automated metric correlates with “correct chemistry”</p></li>
+<li><p>Visual inspection always needed</p></li>
+<li><p>Automation provides false sense of security</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="when-bayesian-optimization-would-help">
+<h3>5.3 When Bayesian Optimization <strong>Would</strong> Help**<a class="headerlink" href="#when-bayesian-optimization-would-help" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>High-throughput screening (1000+ reactions)</p></li>
+<li><p>Automated quality metric (comparison to known barriers)</p></li>
+<li><p>Cheap objective evaluation (MLIP, not DFT)</p></li>
+<li><p>Many parameters (10+ hyperparameters)</p></li>
+</ul>
+<p>None of these apply to typical NEB workflow usage.</p>
+</section>
+<section id="current-best-approach">
+<h3>5.4 Current Best Approach**<a class="headerlink" href="#current-best-approach" title="Link to this heading">¶</a></h3>
+<p>Simple grid search with visual inspection:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Try 3 kmax values</span>
+</span><span data-line="2"><span class="k">for</span><span class="w"> </span>kmax<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span>.5<span class="w"> </span><span class="m">2</span>.0<span class="w"> </span><span class="m">2</span>.5<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span data-line="3"><span class="w">    </span>snakemake<span class="w"> </span>--config<span class="w"> </span>alignment.kmax<span class="o">=</span><span class="nv">$kmax</span><span class="w"> </span><span class="se">\</span>
+</span><span data-line="4"><span class="w">              </span>--wildcards<span class="w"> </span><span class="nv">system</span><span class="o">=</span>YourSystem
+</span><span data-line="5"><span class="k">done</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="c1"># Inspect all 3 paths</span>
+</span><span data-line="8">ase<span class="w"> </span>gui<span class="w"> </span>results/idpp/YourSystem_kmax*/path/*.xyz
+</span><span data-line="9">
+</span><span data-line="10"><span class="c1"># Pick best, run full NEB</span>
+</span></pre></div>
+</div>
+<p>Time: 3 × NEB runtime + 10 min inspection</p>
+</section>
+</section>
+<section id="examples-by-reaction-class">
+<h2>6 Examples by Reaction Class<a class="headerlink" href="#examples-by-reaction-class" title="Link to this heading">¶</a></h2>
+<section id="proton-transfer-h-transfer">
+<h3>6.1 Proton Transfer (H-transfer)<a class="headerlink" href="#proton-transfer-h-transfer" title="Link to this heading">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">systems</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">h_transfer</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">    </span><span class="nt">reactant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path/to/reactant.con</span>
+</span><span data-line="4"><span class="w">    </span><span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path/to/product.con</span>
+</span><span data-line="5"><span class="w">    </span><span class="nt">use_ira</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="nt">alignment</span><span class="p">:</span>
+</span><span data-line="8"><span class="w">  </span><span class="nt">kmax</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.5</span><span class="w">  </span><span class="c1"># Strict matching for light atoms</span>
+</span><span data-line="9">
+</span><span data-line="10"><span class="nt">neb</span><span class="p">:</span>
+</span><span data-line="11"><span class="w">  </span><span class="nt">optimization</span><span class="p">:</span>
+</span><span data-line="12"><span class="w">    </span><span class="nt">images</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12</span>
+</span><span data-line="13"><span class="w">    </span><span class="nt">converged_force</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0514221</span>
+</span></pre></div>
+</div>
+<p><strong>Notes</strong>: H atoms have soft modes. Try kmax = 1.5, 1.8, 2.0 and compare.</p>
+</section>
+<section id="pericyclic-reactions-claisen-cope-diels-alder">
+<h3>6.2 Pericyclic Reactions (Claisen, Cope, Diels-Alder)<a class="headerlink" href="#pericyclic-reactions-claisen-cope-diels-alder" title="Link to this heading">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">alignment</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">kmax</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span><span class="w">  </span><span class="c1"># Medium strictness</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="nt">neb</span><span class="p">:</span>
+</span><span data-line="5"><span class="w">  </span><span class="nt">optimization</span><span class="p">:</span>
+</span><span data-line="6"><span class="w">    </span><span class="nt">images</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">18-24</span><span class="w">  </span><span class="c1"># More images for complex path</span>
+</span></pre></div>
+</div>
+<p><strong>Notes</strong>:</p>
+<ul class="simple">
+<li><p>Backbone permutation critical</p></li>
+<li><p>Visual inspection mandatory</p></li>
+<li><p>Consider manual permutation based on mechanism</p></li>
+</ul>
+</section>
+<section id="isomerization-simple">
+<h3>6.3 Isomerization (Simple)<a class="headerlink" href="#isomerization-simple" title="Link to this heading">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">alignment</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">kmax</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.8</span><span class="w">  </span><span class="c1"># Default works fine</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="nt">neb</span><span class="p">:</span>
+</span><span data-line="5"><span class="w">  </span><span class="nt">optimization</span><span class="p">:</span>
+</span><span data-line="6"><span class="w">    </span><span class="nt">images</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12-16</span>
+</span></pre></div>
+</div>
+<p><strong>Notes</strong>: Usually straightforward, default parameters sufficient.</p>
+</section>
+<section id="surface-reactions">
+<h3>6.4 Surface Reactions<a class="headerlink" href="#surface-reactions" title="Link to this heading">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Requires modified workflow for PBC</span>
+</span><span data-line="2"><span class="nt">alignment</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">  </span><span class="nt">kmax</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.5</span>
+</span><span data-line="4"><span class="w">  </span><span class="c1"># cell_size: not applicable (use slab model)</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="nt">neb</span><span class="p">:</span>
+</span><span data-line="7"><span class="w">  </span><span class="nt">optimization</span><span class="p">:</span>
+</span><span data-line="8"><span class="w">    </span><span class="nt">images</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">18-24</span>
+</span><span data-line="9"><span class="w">    </span><span class="nt">converged_force</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0514221</span>
+</span></pre></div>
+</div>
+<p><strong>Notes</strong>:</p>
+<ul class="simple">
+<li><p>Current workflow targets gas-phase only</p></li>
+<li><p>Surface reactions need PBC modifications</p></li>
+<li><p>Larger cell in surface-normal direction</p></li>
+</ul>
+</section>
+</section>
+<section id="troubleshooting">
+<h2>7 Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<section id="problem-ira-alignment-fails">
+<h3>7.1 Problem: IRA alignment fails**<a class="headerlink" href="#problem-ira-alignment-fails" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Error about permutation matching, very high RMSD</p>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic simple">
+<li><p>Increase kmax (try 2.5, 3.0, 4.0)</p></li>
+<li><p>Check for missing atoms or different formulas</p></li>
+<li><p>Manually verify atom ordering in input files</p></li>
+</ol>
+</section>
+<section id="problem-idpp-path-has-collisions">
+<h3>7.2 Problem: IDPP path has collisions**<a class="headerlink" href="#problem-idpp-path-has-collisions" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Atoms unrealistically close (&lt; 0.5 Å)</p>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic simple">
+<li><p>Reduce SIDPP α (try 0.25, 0.2)</p></li>
+<li><p>Increase number of images</p></li>
+<li><p>Check endpoint alignment (may be wrong permutation)</p></li>
+</ol>
+</section>
+<section id="problem-neb-doesn-t-converge">
+<h3>7.3 Problem: NEB doesn’t converge**<a class="headerlink" href="#problem-neb-doesn-t-converge" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Max iterations reached, forces still high</p>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic simple">
+<li><p>Increase max<sub>iterations</sub>(2000, 3000)</p></li>
+<li><p>Add more images (better path resolution)</p></li>
+<li><p>Check initial path quality (may be too far from MEP)</p></li>
+<li><p>Reduce max<sub>move</sub>(0.05 instead of 0.1)</p></li>
+</ol>
+</section>
+<section id="problem-wrong-saddle-point">
+<h3>7.4 Problem: Wrong saddle point**<a class="headerlink" href="#problem-wrong-saddle-point" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Saddle geometry doesn’t match expected mechanism</p>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic simple">
+<li><p>Suspect permutation error</p></li>
+<li><p>Try different kmax values</p></li>
+<li><p>Manually permute based on chemical intuition</p></li>
+<li><p>Launch dimer from multiple IDPP images</p></li>
+<li><p>Compare with literature/reference calculations</p></li>
+</ol>
+</section>
+</section>
+<section id="references">
+<h2>8 References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>IRA algorithm: Gunde et al., J. Chem. Inf. Model. 2021, 61, 5446-5457</p></li>
+<li><p>SIDPP: Schmerwitz et al., J. Chem. Theory Comput. 2024, 20, 1, 155-163</p></li>
+<li><p>NEB: Jonsson et al., 1998; Henkelman et al., J. Chem. Phys. 2000, 113, 9901</p></li>
+<li><p>L-BFGS: Liu &amp; Nocedal, 1989</p></li>
+</ul>
+</section>
+<section id="see-also">
+<h2>9 See Also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="devnotes.rst">Permutation Sensitivity</a> - Detailed discussion of alignment limitations</p></li>
+<li><p><a class="reference external" href="../examples/wip/claisen/README.rst">Claisen Example</a> - Case study in permutation challenges</p></li>
+<li><p><a class="reference external" href="https://rgpycrumbs.rgoswami.me">rgpycrumbs documentation</a> - IRA alignment implementation details</p></li>
+</ul>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="tutorials/adding_systems.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Adding Your Own System</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="reference/configuration.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Configuration Reference</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--sy-c-text-weak);
+        font-size: 0.9em;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 1rem;
+          align-items: center;
+        "
+      >
+        
+        <span style="display: inline-flex; align-items: center; gap: 0.3em">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M7,20H4V4h3V20z M14,20h-3V12h3V20z M21,20h-3V8h3V20z" />
+          </svg>
+          <span
+            >Analytics by
+            <a
+              href="https://umami.is/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="color: inherit; text-decoration: underline"
+              >Umami</a
+            ></span
+          >
+        </span>
+
+        
+        <span style="display: inline-flex; align-items: center; gap: 0.3em">
+          <span>provided by</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.3em">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1.2em"
+              height="1.2em"
+              viewBox="0 0 64 64"
+              aria-hidden="true"
+            >
+              <g fill-rule="evenodd">
+                <ellipse cx="32" cy="11" fill="#80D25B" rx="7" ry="9" />
+                <path
+                  fill="#80D25B"
+                  d="M20.302104,46 C20.302104,46 17.1330329,55.8812548 20.6828149,59.7817355 C24.232597,63.6822162 26.8008673,63.215359 26.8008673,53.7414927 C26.8008673,44.2676263 20.302104,46 20.302104,46 Z"
+                />
+                <path
+                  fill="#80D25B"
+                  d="M38.302104,46 C38.302104,46 35.1330329,55.8812548 38.6828149,59.7817355 C42.232597,63.6822162 44.8008673,63.215359 44.8008673,53.7414927 C44.8008673,44.2676263 38.302104,46 38.302104,46 Z"
+                  transform="matrix(-1 0 0 1 81.8 0)"
+                />
+                <path
+                  fill="#80D25B"
+                  d="M20.6227767,21.2218684 C20.6227767,21.2218684 13.956214,15.3844007 10.091955,16.0534044 C6.22769598,16.722408 6,22.2124633 6,23.9992899 C6,25.7861165 7.78917398,37.3159836 9.78726488,36.4967476 C11.7853558,35.6775115 13.7411938,27.959322 13.7411938,27.959322 15.6510232,30.2287702 18.609193,30.4630388"
+                />
+                <path
+                  fill="#80D25B"
+                  d="M57.6227767,21.2218684 C57.6227767,21.2218684 50.956214,15.3844007 47.091955,16.0534044 C43.227696,16.722408 43,22.2124633 43,23.9992899 C43,25.7861165 44.789174,37.3159836 46.7872649,36.4967476 C48.7853558,35.6775115 50.7411938,27.959322 50.7411938,27.959322 52.6510232,30.2287702 55.609193,30.4630388"
+                  transform="matrix(-1 0 0 1 100.623 0)"
+                />
+                <path
+                  fill="#BD7575"
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M32,53 C40.836556,53 48,44.4934102 48,34 C48,23.5065898 46.6814044,17 32,17 C17.3185956,17 16,23.5065898 16,34 C16,44.4934102 23.163444,53 32,53 Z"
+                />
+                <polygon
+                  fill="#BD7575"
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  points="32 22 38.928 26 38.928 34 32 38 25.072 34 25.072 26"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M30,8 C28.8954305,8 28,8.8954305 28,10"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M36,8 C34.8954305,8 34,8.8954305 34,10"
+                  transform="matrix(-1 0 0 1 70 0)"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M32.1194396 38.1881507L32.1194396 52.4125899M32.0164956 21.7467197L32.0164956 17M25.2141026 26.0041506L17.737148 23.0721126M25.1254173 34.1534318L16.7659494 38.8876521"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M46.2141026,26.0041506 L38.737148,23.0721126"
+                  transform="matrix(-1 0 0 1 84.951 0)"
+                />
+                <path
+                  stroke="#595959"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M47.1254173,34.1534318 L38.7659494,38.8876521"
+                  transform="matrix(-1 0 0 1 85.891 0)"
+                />
+              </g>
+            </svg>
+            <a
+              href="https://turtletech.us/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="color: inherit; text-decoration: underline"
+              >TurtleTech ehf</a
+            >
+          </span>
+        </span>
+      </div>
+    </div>
+
+    
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, NEB Orchestrator Team, TurtleTech ehf</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div> <div class="sy-foot-socials">
+<a href="https://github.com/HaoZeke/eon_orchestrator" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+</html>

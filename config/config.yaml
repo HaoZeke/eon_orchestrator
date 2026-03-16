@@ -180,6 +180,7 @@ paths:
 #
 # System Applicability:
 # - This workflow is optimized for gas-phase molecular systems
-# - Surface reactions: Modify cell size and consider periodic boundary conditions
+# - Surface reactions: Modify cell size, consider
+#   periodic boundary conditions
 # - Condensed phase: Requires additional solvation/environment setup
 # - Enzymatic reactions: Consider QM/MM setup with eOn

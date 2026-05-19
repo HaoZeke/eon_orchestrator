@@ -1,0 +1,47 @@
+# Geometric spring kink-free density sweep on baker_01_hcn.
+#
+# Demonstration that the cubic-potential spring (F_par = k * (d_n^2 -
+# d_p^2) * tau) lets us run NEB with substantially MORE images than
+# the standard Hookean spring without the small-spacing + stiff-k
+# numerical explosion. With K_eff = 4 k s scaling, dense meshes
+# self-soften.
+
+systems:
+  baker_01_hcn_geomspring:
+    reactant: examples/baker_01_hcn_geomspring/hcn.con
+    product:  examples/baker_01_hcn_geomspring/hnc.con
+    use_ira:  false
+
+model:
+  name: pet-mad-xs-v1.5.0
+  version: v1.5.0
+  type: pet-mad-xs
+
+compute:
+  device: cpu
+
+neb:
+  minimization:
+    max_iterations: 500
+    converged_force: 0.0514221
+    opt_method: lbfgs
+    max_move: 0.1
+  optimization:
+    images: 36
+    max_iterations: 2000
+    converged_force: 0.0514221
+    opt_method: lbfgs
+    max_move: 0.05
+    energy_weighted: false
+    ew_ksp_min: 0.972
+    ew_ksp_max: 9.72
+    ew_trigger: 0.5
+    geometric_spring: true
+    climbing_image_method: true
+    ci_after_rel: 0.5
+    ci_mmf: true
+    ci_mmf_nsteps: 1000
+    sidpp_growth_alpha: 0.33
+
+plotting:
+  title: "Baker 01 HCN: 36-image geometric spring"

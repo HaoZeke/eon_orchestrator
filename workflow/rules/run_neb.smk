@@ -117,6 +117,10 @@ rule run_neb:
         ci_mmf_nsteps=config.get('neb', {}).get('optimization', {}).get('ci_mmf_nsteps', 1000),
         # SIDPP initializer
         sidpp_growth_alpha=config.get('neb', {}).get('optimization', {}).get('sidpp_growth_alpha', 0.33),
+        # Geometric (cubic-potential) spring: F_par = k*(d_n^2 - d_p^2)*tau.
+        # K_eff scales linearly with image spacing -> auto-softens on dense
+        # meshes; perpendicular spring contribution cancels exactly.
+        geometric_spring=config.get('neb', {}).get('optimization', {}).get('geometric_spring', False),
     run:
         # Build eOn configuration for NEB
         neb_settings = {
@@ -138,6 +142,9 @@ rule run_neb:
                 "ew_ksp_min": params.ew_ksp_min,
                 "ew_ksp_max": params.ew_ksp_max,
                 "ew_trigger": params.ew_trigger,
+                # Geometric (cubic-potential) spring; mutually exclusive
+                # with energy_weighted in the buildSpringStrategy factory.
+                "geometric_spring": str(params.geometric_spring).lower(),
                 # Sequential IDPP initializer (collision-free)
                 "initializer": "sidpp",
                 "sidpp_growth_alpha": params.sidpp_growth_alpha,
@@ -177,5 +184,9 @@ rule run_neb:
         shutil.copy2(os.path.abspath(input.reactant), out_path / "reactant.con")
         shutil.copy2(os.path.abspath(input.product), out_path / "product.con")
 
-        # Run NEB optimization
-        subprocess.run(["eonclient"], cwd=out_path, check=True)
+        # Run NEB optimization. EONCLIENT env var overrides the default
+        # "eonclient" lookup so dev builds (e.g. the geometric-spring
+        # branch in feat/geometric-spring-neb) can drive the workflow
+        # without needing to override the conda-installed eon package.
+        eonbin = os.environ.get("EONCLIENT", "eonclient")
+        subprocess.run([eonbin], cwd=out_path, check=True)

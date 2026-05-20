@@ -1,0 +1,35 @@
+#+TITLE: Geometric Spring Baker Ablation
+
+This study runs the Baker icFSM set as a Snakemake matrix over spring strategy
+and image count. The NEB cells are:
+
+- systems: all 24 Baker systems in =resources/icFSM_baker=
+- spring modes: =hookean=, =hookean_energy_weighted=, =geometric=
+- image counts: =18, 36, 54, 72, 90=
+
+The default target runs the NEB matrix, summarizes =results.dat= and =neb.dat=,
+fits the Stan post-processing models, and renders the configured 90-image
+figures with =rgpycrumbs= / =chemparseplot=.
+
+#+begin_src bash
+snakemake -s studies/geometric_spring_baker_ablation/Snakefile -c1 -n
+#+end_src
+
+On Elja, use the study profile so each NEB case is submitted as an independent
+SLURM job:
+
+#+begin_src bash
+snakemake \
+  -s studies/geometric_spring_baker_ablation/Snakefile \
+  --profile studies/geometric_spring_baker_ablation/profiles/elja
+#+end_src
+
+The main outputs are written under
+=studies/geometric_spring_baker_ablation/results/sweeps/geometric_spring_density/=.
+
+Useful named targets:
+
+- =run_cases=: run only the NEB case matrix
+- =summarize=: write =summary.csv= and =summary.md=
+- =analyze=: run the Stan Bayesian post-processing
+- =figures=: render the configured NEB plots and write =figures/manifest.tsv=

@@ -1,0 +1,41 @@
+# -*- mode: snakemake; -*-
+"""Snakemake entry point for the geometric-spring Baker ablation."""
+
+configfile: "studies/geometric_spring_baker_ablation/config.yaml"
+
+include: "workflow/geometric_spring_density.smk"
+
+localrules: all, run_cases, summarize, analyze, figures
+
+
+rule all:
+    input:
+        GEOM_SWEEP_ROOT + "/summary.csv",
+        GEOM_SWEEP_ROOT + "/summary.md",
+        GEOM_SWEEP_ROOT + "/bayesian_summary.md",
+        GEOM_SWEEP_ROOT + "/posterior_samples.csv",
+        GEOM_SWEEP_ROOT + "/figures/manifest.tsv",
+
+
+rule run_cases:
+    input:
+        geom_sweep_outputs("results.dat"),
+        geom_sweep_outputs("neb.con"),
+        geom_sweep_outputs("neb.dat"),
+
+
+rule summarize:
+    input:
+        GEOM_SWEEP_ROOT + "/summary.csv",
+        GEOM_SWEEP_ROOT + "/summary.md",
+
+
+rule analyze:
+    input:
+        GEOM_SWEEP_ROOT + "/bayesian_summary.md",
+        GEOM_SWEEP_ROOT + "/posterior_samples.csv",
+
+
+rule figures:
+    input:
+        GEOM_SWEEP_ROOT + "/figures/manifest.tsv",

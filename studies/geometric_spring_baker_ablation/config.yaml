@@ -1,0 +1,174 @@
+study_root: studies/geometric_spring_baker_ablation
+
+systems:
+  01_hcn:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/01_hcn/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/01_hcn/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/01_hcn/ts.xyz
+  02_hcch:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/02_hcch/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/02_hcch/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/02_hcch/ts.xyz
+  03_h2co:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/03_h2co/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/03_h2co/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/03_h2co/ts.xyz
+  04_ch3o:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/04_ch3o/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/04_ch3o/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/04_ch3o/ts.xyz
+  05_cyclopropyl:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/05_cyclopropyl/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/05_cyclopropyl/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/05_cyclopropyl/ts.xyz
+  06_bicyclobutane:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/06_bicyclobutane/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/06_bicyclobutane/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/06_bicyclobutane/ts.xyz
+  08_formyloxyethyl:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/08_formyloxyethyl/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/08_formyloxyethyl/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/08_formyloxyethyl/ts.xyz
+  09_parentdielsalder:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/09_parentdielsalder/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/09_parentdielsalder/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/09_parentdielsalder/ts.xyz
+  10_tetrazine:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/10_tetrazine/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/10_tetrazine/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/10_tetrazine/ts.xyz
+  11_trans_butadiene:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/11_trans_butadiene/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/11_trans_butadiene/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/11_trans_butadiene/ts.xyz
+  12_ethane_h2_abstraction:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/12_ethane_h2_abstraction/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/12_ethane_h2_abstraction/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/12_ethane_h2_abstraction/ts.xyz
+  13_hf_abstraction:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/13_hf_abstraction/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/13_hf_abstraction/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/13_hf_abstraction/ts.xyz
+  14_vinyl_alcohol:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/14_vinyl_alcohol/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/14_vinyl_alcohol/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/14_vinyl_alcohol/ts.xyz
+  15_hocl:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/15_hocl/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/15_hocl/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/15_hocl/ts.xyz
+  16_h2po4_anion:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/16_h2po4_anion/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/16_h2po4_anion/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/16_h2po4_anion/ts.xyz
+  17_claisen:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/17_claisen/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/17_claisen/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/17_claisen/ts.xyz
+  18_silylene_insertion:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/18_silylene_insertion/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/18_silylene_insertion/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/18_silylene_insertion/ts.xyz
+  19_hnccs:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/19_hnccs/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/19_hnccs/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/19_hnccs/ts.xyz
+  20_hconh3_cation:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/20_hconh3_cation/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/20_hconh3_cation/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/20_hconh3_cation/ts.xyz
+  21_acrolein_rot:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/21_acrolein_rot/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/21_acrolein_rot/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/21_acrolein_rot/ts.xyz
+  22_hconhoh:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/22_hconhoh/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/22_hconhoh/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/22_hconhoh/ts.xyz
+  23_hcn_h2:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/23_hcn_h2/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/23_hcn_h2/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/23_hcn_h2/ts.xyz
+  24_h2cnh:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/24_h2cnh/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/24_h2cnh/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/24_h2cnh/ts.xyz
+  25_hcnh2:
+    reactant: studies/geometric_spring_baker_ablation/resources/icFSM_baker/25_hcnh2/initial/ipath_000.con
+    product: studies/geometric_spring_baker_ablation/resources/icFSM_baker/25_hcnh2/initial/ipath_001.con
+    saddle: studies/geometric_spring_baker_ablation/resources/icFSM_baker/25_hcnh2/ts.xyz
+
+model:
+  name: pet-mad-xs-v1.5.0
+  version: v1.5.0
+  type: pet-mad-xs
+
+compute:
+  device: cpu
+
+neb:
+  optimization:
+    max_iterations: 2000
+    converged_force: 0.0514221
+    opt_method: lbfgs
+    max_move: 0.05
+    ew_ksp_min: 0.972
+    ew_ksp_max: 9.72
+    ew_trigger: 0.5
+    climbing_image_method: true
+    ci_after_rel: 0.5
+    ci_mmf: true
+    ci_mmf_nsteps: 1000
+    sidpp_growth_alpha: 0.33
+
+plotting:
+  facecolor: white
+  figure:
+    dpi: 300
+    zoom_ratio: 0.4
+  fonts:
+    base: 12
+  ira_kmax: 14
+
+paths:
+  models: results/models
+  sweeps: studies/geometric_spring_baker_ablation/results/sweeps
+
+resources:
+  neb:
+    runtime: 180
+    mem_mb: 64000
+    cpus_per_task: 8
+  analysis:
+    runtime: 90
+    mem_mb: 32000
+    cpus_per_task: 4
+  figures:
+    runtime: 60
+    mem_mb: 32000
+    cpus_per_task: 4
+
+sweeps:
+  geometric_spring_density:
+    images: [18, 36, 54, 72, 90]
+    spring_modes:
+      hookean:
+        spring: 5.0
+        energy_weighted: false
+        geometric_spring: false
+      hookean_energy_weighted:
+        spring: 5.0
+        energy_weighted: true
+        geometric_spring: false
+      geometric:
+        spring: 5.0
+        energy_weighted: false
+        geometric_spring: true
+    bayes:
+      chains: 4
+      samples: 1000
+      warmup: 1000
+    visuals:
+      images: [90]
+      spring_modes: [hookean, hookean_energy_weighted, geometric]
+      plot_types: [profile_path, profile_index, landscape_rmsd]

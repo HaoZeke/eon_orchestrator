@@ -1,0 +1,20 @@
+# Snakemake profile for the Elja SLURM partition used by the Baker ablation.
+executor: slurm
+jobs: 48
+latency-wait: 10
+restart-times: 1
+rerun-incomplete: true
+printshellcmds: true
+keep-going: true
+max-jobs-per-second: 5
+slurm-init-seconds-before-status: 5
+
+default-resources:
+  - slurm_partition=s-normal
+  - slurm_account=chem-ui
+  - runtime=180
+  - mem_mb=64000
+  - tasks=1
+  - cpus_per_task=8
+  - gpu=0
+  - slurm_extra="'--export=ALL'"

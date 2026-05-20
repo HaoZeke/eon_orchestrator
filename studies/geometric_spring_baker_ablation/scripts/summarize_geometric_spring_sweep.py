@@ -33,6 +33,9 @@ FIELDNAMES = [
     "spacing_mean",
     "spacing_cv",
     "spacing_ratio",
+    "kink_mean",
+    "kink_p95",
+    "kink_max",
 ]
 
 
@@ -58,6 +61,96 @@ def parse_neb_dat(path: Path) -> list[dict[str, float]]:
             continue
         rows.append({name: float(value) for name, value in zip(header, values)})
     return rows
+
+
+def parse_neb_con(path: Path) -> list[list[tuple[float, float, float]]]:
+    lines = path.read_text().splitlines()
+    frames: list[list[tuple[float, float, float]]] = []
+    idx = 0
+    while idx + 8 < len(lines):
+        try:
+            n_components = int(lines[idx + 6].strip())
+            counts = [int(value) for value in lines[idx + 7].split()]
+        except ValueError:
+            idx += 1
+            continue
+        if len(counts) != n_components:
+            idx += 1
+            continue
+
+        cursor = idx + 9
+        coords: list[tuple[float, float, float]] = []
+        ok = True
+        for count in counts:
+            cursor += 2
+            if cursor + count > len(lines):
+                ok = False
+                break
+            for line in lines[cursor : cursor + count]:
+                parts = line.split()
+                if len(parts) < 3:
+                    ok = False
+                    break
+                try:
+                    coords.append((float(parts[0]), float(parts[1]), float(parts[2])))
+                except ValueError:
+                    ok = False
+                    break
+            if not ok:
+                break
+            cursor += count
+        if ok and coords:
+            frames.append(coords)
+            idx = cursor
+        else:
+            idx += 1
+    return frames
+
+
+def flatten(frame: list[tuple[float, float, float]]) -> list[float]:
+    return [value for xyz in frame for value in xyz]
+
+
+def vec_sub(a: list[float], b: list[float]) -> list[float]:
+    return [x - y for x, y in zip(a, b)]
+
+
+def vec_norm(vec: list[float]) -> float:
+    return math.sqrt(sum(value * value for value in vec))
+
+
+def unit(vec: list[float]) -> list[float] | None:
+    norm = vec_norm(vec)
+    if norm <= 0.0 or not math.isfinite(norm):
+        return None
+    return [value / norm for value in vec]
+
+
+def kink_indices(frames: list[list[tuple[float, float, float]]]) -> list[float]:
+    flat = [flatten(frame) for frame in frames]
+    values: list[float] = []
+    for prev_frame, frame, next_frame in zip(flat, flat[1:], flat[2:]):
+        prev_edge = unit(vec_sub(frame, prev_frame))
+        next_edge = unit(vec_sub(next_frame, frame))
+        if prev_edge is None or next_edge is None:
+            continue
+        values.append(vec_norm(vec_sub(next_edge, prev_edge)))
+    return values
+
+
+def quantile(values: list[float], q: float) -> float:
+    finite = sorted(value for value in values if math.isfinite(value))
+    if not finite:
+        return math.nan
+    if len(finite) == 1:
+        return finite[0]
+    position = (len(finite) - 1) * q
+    lo = math.floor(position)
+    hi = math.ceil(position)
+    if lo == hi:
+        return finite[lo]
+    weight = position - lo
+    return finite[lo] * (1.0 - weight) + finite[hi] * weight
 
 
 def safe_float(value: str | None) -> float:
@@ -99,6 +192,8 @@ def summarize_case(case_dir: Path) -> dict[str, object]:
 
     termination = int(safe_float(results.get("termination_reason")))
     product_delta = safe_float(results.get(f"image{len(image_pairs) - 1}_energy"))
+    kinks = kink_indices(parse_neb_con(case_dir / "neb.con"))
+    kink_mean = sum(kinks) / len(kinks) if kinks else math.nan
 
     return {
         "system": case_dir.parent.parent.name,
@@ -117,6 +212,9 @@ def summarize_case(case_dir: Path) -> dict[str, object]:
         "spacing_mean": spacing_mean,
         "spacing_cv": spacing_cv,
         "spacing_ratio": spacing_ratio,
+        "kink_mean": kink_mean,
+        "kink_p95": quantile(kinks, 0.95),
+        "kink_max": max(kinks) if kinks else math.nan,
     }
 
 
@@ -141,6 +239,8 @@ def write_markdown(rows: list[dict[str, object]], path: Path) -> None:
         "max_projected_force_eVA",
         "neb_force_calls",
         "spacing_cv",
+        "kink_mean",
+        "kink_p95",
         "spacing_ratio",
         "number_of_extrema",
     ]
@@ -164,7 +264,9 @@ def main(sweep_root: Path, output_csv: Path, output_md: Path) -> None:
     rows = [
         summarize_case(path)
         for path in sorted(sweep_root.glob("*/*/images_*"))
-        if (path / "results.dat").exists() and (path / "neb.dat").exists()
+        if (path / "results.dat").exists()
+        and (path / "neb.dat").exists()
+        and (path / "neb.con").exists()
     ]
     rows.sort(key=lambda row: (str(row["system"]), str(row["spring_mode"]), int(row["images"])))
 

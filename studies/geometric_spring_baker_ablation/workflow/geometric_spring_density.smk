@@ -200,6 +200,7 @@ rule summarize_geometric_spring_density:
     """Summarize the density sweep into CSV and Markdown tables."""
     input:
         results=geom_sweep_outputs("results.dat"),
+        con=geom_sweep_outputs("neb.con"),
         neb=geom_sweep_outputs("neb.dat"),
     output:
         csv=GEOM_SWEEP_ROOT + "/summary.csv",

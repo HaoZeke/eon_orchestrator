@@ -37,6 +37,11 @@ FIELDNAMES = [
     "kink_p95",
     "kink_max",
 ]
+CASE_OUTPUTS = ("results.dat", "neb.dat", "neb.con")
+
+
+class CaseSummaryError(ValueError):
+    """Raised when a case directory cannot be summarized."""
 
 
 def parse_results(path: Path) -> dict[str, str]:
@@ -162,9 +167,36 @@ def safe_float(value: str | None) -> float:
         return math.nan
 
 
+def require_case_file(case_dir: Path, filename: str) -> Path:
+    path = case_dir / filename
+    if not path.is_file():
+        raise CaseSummaryError(f"{case_dir}: missing {filename}")
+    if path.stat().st_size == 0:
+        raise CaseSummaryError(f"{case_dir}: empty {filename}")
+    return path
+
+
+def required_float(results: dict[str, str], key: str, case_dir: Path) -> float:
+    value = safe_float(results.get(key))
+    if not math.isfinite(value):
+        raise CaseSummaryError(f"{case_dir}: missing or invalid {key}")
+    return value
+
+
+def required_int(results: dict[str, str], key: str, case_dir: Path) -> int:
+    return int(required_float(results, key, case_dir))
+
+
 def summarize_case(case_dir: Path) -> dict[str, object]:
+    for filename in CASE_OUTPUTS:
+        require_case_file(case_dir, filename)
+
     results = parse_results(case_dir / "results.dat")
     neb_rows = parse_neb_dat(case_dir / "neb.dat")
+    if not results:
+        raise CaseSummaryError(f"{case_dir}: results.dat has no key-value rows")
+    if not neb_rows:
+        raise CaseSummaryError(f"{case_dir}: neb.dat has no data rows")
 
     image_pairs = []
     idx = 0
@@ -172,7 +204,11 @@ def summarize_case(case_dir: Path) -> dict[str, object]:
         image_pairs.append((idx, safe_float(results[f"image{idx}_energy"])))
         idx += 1
 
-    saddle_image, barrier = max(image_pairs, key=lambda item: item[1])
+    finite_image_pairs = [(idx, energy) for idx, energy in image_pairs if math.isfinite(energy)]
+    if not finite_image_pairs:
+        raise CaseSummaryError(f"{case_dir}: no finite image energies in results.dat")
+
+    saddle_image, barrier = max(finite_image_pairs, key=lambda item: item[1])
     projected = [
         safe_float(value)
         for key, value in results.items()
@@ -190,9 +226,11 @@ def summarize_case(case_dir: Path) -> dict[str, object]:
         spacing_cv = math.nan
         spacing_ratio = math.nan
 
-    termination = int(safe_float(results.get("termination_reason")))
+    termination = required_int(results, "termination_reason", case_dir)
     product_delta = safe_float(results.get(f"image{len(image_pairs) - 1}_energy"))
     kinks = kink_indices(parse_neb_con(case_dir / "neb.con"))
+    if not kinks:
+        raise CaseSummaryError(f"{case_dir}: neb.con did not yield finite kink metrics")
     kink_mean = sum(kinks) / len(kinks) if kinks else math.nan
 
     return {
@@ -205,10 +243,10 @@ def summarize_case(case_dir: Path) -> dict[str, object]:
         "saddle_image": saddle_image,
         "product_delta_eV": product_delta,
         "max_projected_force_eVA": max(projected) if projected else math.nan,
-        "total_force_calls": int(safe_float(results.get("total_force_calls"))),
-        "neb_force_calls": int(safe_float(results.get("force_calls_neb"))),
+        "total_force_calls": required_int(results, "total_force_calls", case_dir),
+        "neb_force_calls": required_int(results, "force_calls_neb", case_dir),
         "time_seconds": safe_float(results.get("time_seconds")),
-        "number_of_extrema": int(safe_float(results.get("number_of_extrema"))),
+        "number_of_extrema": required_int(results, "number_of_extrema", case_dir),
         "spacing_mean": spacing_mean,
         "spacing_cv": spacing_cv,
         "spacing_ratio": spacing_ratio,
@@ -256,19 +294,42 @@ def write_markdown(rows: list[dict[str, object]], path: Path) -> None:
     path.write_text("\n".join(lines))
 
 
+def validate_rows(rows: list[dict[str, object]], expected_count: int | None) -> None:
+    if not rows:
+        raise click.ClickException("No complete case directories were summarized")
+
+    keys = [(row["system"], row["spring_mode"], row["images"]) for row in rows]
+    duplicates = sorted({key for key in keys if keys.count(key) > 1})
+    if duplicates:
+        sample = ", ".join(str(item) for item in duplicates[:5])
+        raise click.ClickException(f"Duplicate summary rows: {sample}")
+
+    if expected_count is not None and len(rows) != expected_count:
+        raise click.ClickException(
+            f"Expected {expected_count} summary rows, found {len(rows)}"
+        )
+
+
 @click.command()
 @click.option("--sweep-root", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path))
 @click.option("--output-csv", required=True, type=click.Path(dir_okay=False, path_type=Path))
 @click.option("--output-md", required=True, type=click.Path(dir_okay=False, path_type=Path))
-def main(sweep_root: Path, output_csv: Path, output_md: Path) -> None:
-    rows = [
-        summarize_case(path)
-        for path in sorted(sweep_root.glob("*/*/images_*"))
-        if (path / "results.dat").exists()
-        and (path / "neb.dat").exists()
-        and (path / "neb.con").exists()
-    ]
+@click.option("--expected-count", type=int, default=None, help="Fail unless this many rows are summarized.")
+def main(sweep_root: Path, output_csv: Path, output_md: Path, expected_count: int | None) -> None:
+    rows: list[dict[str, object]] = []
+    errors: list[str] = []
+    for path in sorted(sweep_root.glob("*/*/images_*")):
+        try:
+            rows.append(summarize_case(path))
+        except CaseSummaryError as exc:
+            errors.append(str(exc))
+    if errors:
+        sample = "\n".join(errors[:20])
+        suffix = "" if len(errors) <= 20 else f"\n... {len(errors) - 20} more"
+        raise click.ClickException(f"Failed to summarize {len(errors)} cases:\n{sample}{suffix}")
+
     rows.sort(key=lambda row: (str(row["system"]), str(row["spring_mode"]), int(row["images"])))
+    validate_rows(rows, expected_count)
 
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     with output_csv.open("w", newline="") as handle:

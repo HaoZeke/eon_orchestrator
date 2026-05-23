@@ -40,6 +40,9 @@ GEOM_SWEEP_ROOT = (
     config.get("paths", {}).get("sweeps", f"{STUDY_ROOT}/results/sweeps")
     + f"/{GEOM_SWEEP_NAME}"
 )
+GEOM_SWEEP_EXPECTED_CASES = (
+    len(GEOM_SWEEP_SYSTEMS) * len(GEOM_SWEEP_MODE_NAMES) * len(GEOM_SWEEP_IMAGES)
+)
 GEOM_VISUALS = GEOM_SWEEP.get("visuals", {})
 GEOM_VISUAL_SYSTEMS = list(GEOM_VISUALS.get("systems", GEOM_SWEEP_SYSTEMS))
 GEOM_VISUAL_IMAGES = [str(x) for x in GEOM_VISUALS.get("images", [90])]
@@ -47,6 +50,13 @@ GEOM_VISUAL_MODES = list(GEOM_VISUALS.get("spring_modes", GEOM_SWEEP_MODE_NAMES)
 GEOM_VISUAL_PLOT_TYPES = list(
     GEOM_VISUALS.get("plot_types", ["profile_path", "profile_index", "landscape_rmsd"])
 )
+GEOM_VISUAL_EXPECTED_PLOTS = (
+    len(GEOM_VISUAL_SYSTEMS)
+    * len(GEOM_VISUAL_MODES)
+    * len(GEOM_VISUAL_IMAGES)
+    * len(GEOM_VISUAL_PLOT_TYPES)
+)
+UV_RUNNER = config.get("tools", {}).get("uv", "uv")
 
 
 def geom_sweep_outputs(filename):
@@ -193,7 +203,21 @@ rule run_geometric_spring_density_case:
         shutil.copy2(os.path.abspath(input.product), out_path / "product.con")
 
         eonbin = os.environ.get("EONCLIENT", "eonclient")
-        subprocess.run([eonbin], cwd=out_path, check=True)
+        if os.path.sep in eonbin:
+            eon_exec = eonbin
+            if not os.access(eon_exec, os.X_OK):
+                raise FileNotFoundError(f"EONCLIENT is not executable: {eon_exec}")
+        else:
+            eon_exec = shutil.which(eonbin)
+            if eon_exec is None:
+                raise FileNotFoundError(f"Cannot find eOn executable on PATH: {eonbin}")
+
+        subprocess.run([eon_exec], cwd=out_path, check=True)
+
+        for produced in (output.results_dat, output.neb_con, output.neb_dat):
+            produced_path = Path(produced)
+            if not produced_path.is_file() or produced_path.stat().st_size == 0:
+                raise RuntimeError(f"Missing or empty eOn output: {produced_path}")
 
 
 rule summarize_geometric_spring_density:
@@ -205,6 +229,8 @@ rule summarize_geometric_spring_density:
     output:
         csv=GEOM_SWEEP_ROOT + "/summary.csv",
         markdown=GEOM_SWEEP_ROOT + "/summary.md",
+    params:
+        expected_count=GEOM_SWEEP_EXPECTED_CASES,
     threads: 1
     resources:
         runtime=30,
@@ -214,10 +240,11 @@ rule summarize_geometric_spring_density:
         gpu=0,
     shell:
         """
-        uv run --script {STUDY_ROOT}/scripts/summarize_geometric_spring_sweep.py \
+        {UV_RUNNER} run --script {STUDY_ROOT}/scripts/summarize_geometric_spring_sweep.py \
           --sweep-root {GEOM_SWEEP_ROOT} \
           --output-csv {output.csv} \
-          --output-md {output.markdown}
+          --output-md {output.markdown} \
+          --expected-count {params.expected_count}
         """
 
 
@@ -241,7 +268,7 @@ rule analyze_geometric_spring_density:
         gpu=0,
     shell:
         """
-        uv run --script {STUDY_ROOT}/scripts/analyze_geometric_spring_ablation.py \
+        {UV_RUNNER} run --script {STUDY_ROOT}/scripts/analyze_geometric_spring_ablation.py \
           --summary-csv {input.csv} \
           --output-md {output.markdown} \
           --posterior-csv {output.samples} \
@@ -306,6 +333,8 @@ rule manifest_geometric_spring_density_visuals:
         plots=geom_visual_outputs("plot.png"),
     output:
         manifest=GEOM_SWEEP_ROOT + "/figures/manifest.tsv",
+    params:
+        expected_count=GEOM_VISUAL_EXPECTED_PLOTS,
     threads: 1
     resources:
         runtime=15,
@@ -315,7 +344,8 @@ rule manifest_geometric_spring_density_visuals:
         gpu=0,
     shell:
         """
-        uv run --script {STUDY_ROOT}/scripts/write_geometric_spring_visual_manifest.py \
+        {UV_RUNNER} run --script {STUDY_ROOT}/scripts/write_geometric_spring_visual_manifest.py \
           --sweep-root {GEOM_SWEEP_ROOT} \
-          --output {output.manifest}
+          --output {output.manifest} \
+          --expected-count {params.expected_count}
         """

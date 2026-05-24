@@ -39,6 +39,7 @@ FIELDNAMES = [
     "kink_max",
 ]
 CASE_OUTPUTS = ("results.dat", "neb.dat", "neb.con")
+KEY_VALUE_RESULTS = {"time_seconds", "user_time", "system_time"}
 
 
 class CaseSummaryError(ValueError):
@@ -51,7 +52,10 @@ def parse_results(path: Path) -> dict[str, str]:
         parts = raw_line.split(maxsplit=1)
         if len(parts) == 2:
             value, key = parts
-            data[key] = value
+            if value in KEY_VALUE_RESULTS:
+                data[value] = key
+            else:
+                data[key] = value
     return data
 
 

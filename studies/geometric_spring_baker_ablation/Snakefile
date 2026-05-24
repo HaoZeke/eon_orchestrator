@@ -12,6 +12,7 @@ rule all:
     input:
         GEOM_SWEEP_ROOT + "/summary.csv",
         GEOM_SWEEP_ROOT + "/summary.md",
+        GEOM_SWEEP_ROOT + "/real_data_approval.txt",
         GEOM_SWEEP_ROOT + "/bayesian_summary.md",
         GEOM_SWEEP_ROOT + "/posterior_samples.csv",
         GEOM_SWEEP_ROOT + "/figures/manifest.tsv",
@@ -28,6 +29,7 @@ rule summarize:
     input:
         GEOM_SWEEP_ROOT + "/summary.csv",
         GEOM_SWEEP_ROOT + "/summary.md",
+        GEOM_SWEEP_ROOT + "/real_data_approval.txt",
 
 
 rule analyze:

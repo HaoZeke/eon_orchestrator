@@ -4,12 +4,14 @@ This study runs the Baker icFSM set as a Snakemake matrix over spring strategy
 and image count. The NEB cells are:
 
 - systems: all 24 Baker systems in =resources/icFSM_baker=
-- spring modes: =hookean=, =hookean_energy_weighted=, =geometric=
+- spring modes: Hookean, geometric, and Onsager-Machlup spring laws crossed
+  with energy weighting and DNEB projection layers
 - image counts: =18, 36, 54, 72, 90=
 
 The default target runs the NEB matrix, summarizes =results.dat= and =neb.dat=,
-fits the Stan post-processing models, and renders the configured 90-image
-figures with =rgpycrumbs= / =chemparseplot=.
+writes a real-data approval snapshot for the layered methods, fits the Stan
+post-processing models, and renders the configured 90-image figures with
+=rgpycrumbs= / =chemparseplot=.
 
 #+begin_src bash
 snakemake -s studies/geometric_spring_baker_ablation/Snakefile -c1 -n
@@ -30,6 +32,6 @@ The main outputs are written under
 Useful named targets:
 
 - =run_cases=: run only the NEB case matrix
-- =summarize=: write =summary.csv= and =summary.md=
+- =summarize=: write =summary.csv=, =summary.md=, and =real_data_approval.txt=
 - =analyze=: run the Stan Bayesian post-processing
 - =figures=: render the configured NEB plots and write =figures/manifest.tsv=

@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import math
 from pathlib import Path
 
@@ -294,6 +295,160 @@ def write_markdown(rows: list[dict[str, object]], path: Path) -> None:
     path.write_text("\n".join(lines))
 
 
+def metric_delta(
+    row: dict[str, object],
+    baseline: dict[str, object],
+    metric: str,
+) -> float:
+    value = row.get(metric)
+    baseline_value = baseline.get(metric)
+    if not isinstance(value, (int, float)) or not isinstance(
+        baseline_value,
+        (int, float),
+    ):
+        return math.nan
+    return float(value) - float(baseline_value)
+
+
+def write_real_data_approval(
+    rows: list[dict[str, object]],
+    path: Path,
+    mode_baselines: dict[str, str],
+) -> None:
+    index = {
+        (str(row["system"]), str(row["spring_mode"]), int(row["images"])): row
+        for row in rows
+    }
+    comparisons: list[dict[str, object]] = []
+    missing: list[str] = []
+    for row in rows:
+        mode = str(row["spring_mode"])
+        baseline_mode = mode_baselines.get(mode)
+        if not baseline_mode:
+            continue
+        key = (str(row["system"]), baseline_mode, int(row["images"]))
+        baseline = index.get(key)
+        if baseline is None:
+            missing.append(
+                f"{row['system']} images_{row['images']} {mode}->{baseline_mode}"
+            )
+            continue
+        comparisons.append(
+            {
+                "system": row["system"],
+                "images": row["images"],
+                "mode": mode,
+                "baseline_mode": baseline_mode,
+                "success": row["success"],
+                "baseline_success": baseline["success"],
+                "delta_barrier_eV": metric_delta(row, baseline, "barrier_eV"),
+                "delta_force_eVA": metric_delta(row, baseline, "max_projected_force_eVA"),
+                "delta_neb_force_calls": metric_delta(row, baseline, "neb_force_calls"),
+                "delta_kink_p95": metric_delta(row, baseline, "kink_p95"),
+                "delta_extrema": metric_delta(row, baseline, "number_of_extrema"),
+            }
+        )
+    if missing:
+        sample = "\n".join(missing[:20])
+        suffix = "" if len(missing) <= 20 else f"\n... {len(missing) - 20} more"
+        raise click.ClickException(f"Missing real-data baselines:\n{sample}{suffix}")
+
+    aggregate: dict[tuple[str, str], list[dict[str, object]]] = {}
+    for comparison in comparisons:
+        key = (str(comparison["mode"]), str(comparison["baseline_mode"]))
+        aggregate.setdefault(key, []).append(comparison)
+
+    lines = [
+        "case: baker_petmad_layered_neb",
+        f"summary_rows: {len(rows)}",
+        f"comparisons: {len(comparisons)}",
+        "",
+        "mode_baselines:",
+    ]
+    for mode, baseline_mode in sorted(mode_baselines.items()):
+        lines.append(f"  {mode}: {baseline_mode}")
+
+    lines.extend(
+        [
+            "",
+            "aggregate:",
+            (
+                "mode,baseline,n,success,baseline_success,"
+                "mean_delta_force_eVA,mean_delta_kink_p95,"
+                "mean_delta_neb_force_calls,mean_delta_extrema"
+            ),
+        ]
+    )
+    for (mode, baseline_mode), group in sorted(aggregate.items()):
+        n = len(group)
+
+        def mean(metric: str) -> float:
+            values = [
+                float(item[metric])
+                for item in group
+                if isinstance(item[metric], (int, float))
+                and math.isfinite(float(item[metric]))
+            ]
+            return sum(values) / len(values) if values else math.nan
+
+        success = sum(1 for item in group if bool(item["success"]))
+        baseline_success = sum(1 for item in group if bool(item["baseline_success"]))
+        lines.append(
+            ",".join(
+                [
+                    mode,
+                    baseline_mode,
+                    str(n),
+                    str(success),
+                    str(baseline_success),
+                    f"{mean('delta_force_eVA'):.6g}",
+                    f"{mean('delta_kink_p95'):.6g}",
+                    f"{mean('delta_neb_force_calls'):.6g}",
+                    f"{mean('delta_extrema'):.6g}",
+                ]
+            )
+        )
+
+    lines.extend(
+        [
+            "",
+            "comparison_rows:",
+            (
+                "system,images,mode,baseline,success,baseline_success,"
+                "delta_barrier_eV,delta_force_eVA,delta_neb_force_calls,"
+                "delta_kink_p95,delta_extrema"
+            ),
+        ]
+    )
+    for item in sorted(
+        comparisons,
+        key=lambda entry: (
+            str(entry["system"]),
+            int(entry["images"]),
+            str(entry["mode"]),
+        ),
+    ):
+        lines.append(
+            ",".join(
+                [
+                    str(item["system"]),
+                    str(item["images"]),
+                    str(item["mode"]),
+                    str(item["baseline_mode"]),
+                    str(item["success"]).lower(),
+                    str(item["baseline_success"]).lower(),
+                    f"{float(item['delta_barrier_eV']):.6g}",
+                    f"{float(item['delta_force_eVA']):.6g}",
+                    f"{float(item['delta_neb_force_calls']):.6g}",
+                    f"{float(item['delta_kink_p95']):.6g}",
+                    f"{float(item['delta_extrema']):.6g}",
+                ]
+            )
+        )
+    lines.append("")
+    path.write_text("\n".join(lines))
+
+
 def validate_rows(rows: list[dict[str, object]], expected_count: int | None) -> None:
     if not rows:
         raise click.ClickException("No complete case directories were summarized")
@@ -311,11 +466,41 @@ def validate_rows(rows: list[dict[str, object]], expected_count: int | None) -> 
 
 
 @click.command()
-@click.option("--sweep-root", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path))
-@click.option("--output-csv", required=True, type=click.Path(dir_okay=False, path_type=Path))
-@click.option("--output-md", required=True, type=click.Path(dir_okay=False, path_type=Path))
-@click.option("--expected-count", type=int, default=None, help="Fail unless this many rows are summarized.")
-def main(sweep_root: Path, output_csv: Path, output_md: Path, expected_count: int | None) -> None:
+@click.option(
+    "--sweep-root",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+)
+@click.option(
+    "--output-csv",
+    required=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+)
+@click.option(
+    "--output-md",
+    required=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+)
+@click.option("--output-approval", type=click.Path(dir_okay=False, path_type=Path))
+@click.option(
+    "--mode-baselines-json",
+    default="{}",
+    help="JSON mapping of mode to baseline mode.",
+)
+@click.option(
+    "--expected-count",
+    type=int,
+    default=None,
+    help="Fail unless this many rows are summarized.",
+)
+def main(
+    sweep_root: Path,
+    output_csv: Path,
+    output_md: Path,
+    output_approval: Path | None,
+    mode_baselines_json: str,
+    expected_count: int | None,
+) -> None:
     rows: list[dict[str, object]] = []
     errors: list[str] = []
     for path in sorted(sweep_root.glob("*/*/images_*")):
@@ -326,9 +511,17 @@ def main(sweep_root: Path, output_csv: Path, output_md: Path, expected_count: in
     if errors:
         sample = "\n".join(errors[:20])
         suffix = "" if len(errors) <= 20 else f"\n... {len(errors) - 20} more"
-        raise click.ClickException(f"Failed to summarize {len(errors)} cases:\n{sample}{suffix}")
+        raise click.ClickException(
+            f"Failed to summarize {len(errors)} cases:\n{sample}{suffix}"
+        )
 
-    rows.sort(key=lambda row: (str(row["system"]), str(row["spring_mode"]), int(row["images"])))
+    rows.sort(
+        key=lambda row: (
+            str(row["system"]),
+            str(row["spring_mode"]),
+            int(row["images"]),
+        )
+    )
     validate_rows(rows, expected_count)
 
     output_csv.parent.mkdir(parents=True, exist_ok=True)
@@ -337,6 +530,18 @@ def main(sweep_root: Path, output_csv: Path, output_md: Path, expected_count: in
         writer.writeheader()
         writer.writerows(rows)
     write_markdown(rows, output_md)
+    if output_approval is not None:
+        try:
+            mode_baselines = json.loads(mode_baselines_json)
+        except json.JSONDecodeError as exc:
+            raise click.ClickException(f"Invalid --mode-baselines-json: {exc}") from exc
+        if not isinstance(mode_baselines, dict):
+            raise click.ClickException("--mode-baselines-json must decode to an object")
+        write_real_data_approval(
+            rows,
+            output_approval,
+            {str(key): str(value) for key, value in mode_baselines.items()},
+        )
 
 
 if __name__ == "__main__":

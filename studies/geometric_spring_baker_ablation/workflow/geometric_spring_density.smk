@@ -3,6 +3,7 @@
 
 from pathlib import Path
 from rgpycrumbs.eon.helpers import write_eon_config
+import json
 import os
 import shutil
 import subprocess
@@ -36,6 +37,12 @@ GEOM_SWEEP_MODES = GEOM_SWEEP.get(
     },
 )
 GEOM_SWEEP_MODE_NAMES = list(GEOM_SWEEP_MODES.keys())
+GEOM_SWEEP_MODE_BASELINES = {
+    name: mode.get("baseline_mode")
+    for name, mode in GEOM_SWEEP_MODES.items()
+    if mode.get("baseline_mode")
+}
+GEOM_SWEEP_MODE_BASELINES_JSON = json.dumps(GEOM_SWEEP_MODE_BASELINES, sort_keys=True)
 GEOM_SWEEP_ROOT = (
     config.get("paths", {}).get("sweeps", f"{STUDY_ROOT}/results/sweeps")
     + f"/{GEOM_SWEEP_NAME}"
@@ -127,6 +134,13 @@ rule run_geometric_spring_density_case:
         ci_mmf=config.get("neb", {}).get("optimization", {}).get("ci_mmf", True),
         ci_mmf_nsteps=config.get("neb", {}).get("optimization", {}).get("ci_mmf_nsteps", 1000),
         sidpp_growth_alpha=config.get("neb", {}).get("optimization", {}).get("sidpp_growth_alpha", 0.33),
+        doubly_nudged_default=config.get("neb", {}).get("optimization", {}).get("doubly_nudged", False),
+        elastic_band_default=config.get("neb", {}).get("optimization", {}).get("elastic_band", False),
+        om_default=config.get("neb", {}).get("optimization", {}).get("onsager_machlup", False),
+        om_optimize_k=config.get("neb", {}).get("optimization", {}).get("om_optimize_k", True),
+        om_k_scale=config.get("neb", {}).get("optimization", {}).get("om_k_scale", 1.0),
+        om_k_min=config.get("neb", {}).get("optimization", {}).get("om_k_min", 0.1),
+        om_k_max=config.get("neb", {}).get("optimization", {}).get("om_k_max", 100.0),
         mode_cfg=lambda wildcards: GEOM_SWEEP_MODES[wildcards.spring_mode],
     threads: config.get("resources", {}).get("neb", {}).get("cpus_per_task", 8)
     resources:
@@ -151,6 +165,9 @@ rule run_geometric_spring_density_case:
         spring = float(mode_cfg.get("spring", config.get("neb", {}).get("optimization", {}).get("spring", 5.0)))
         geometric = bool(mode_cfg.get("geometric_spring", False))
         energy_weighted = bool(mode_cfg.get("energy_weighted", False))
+        doubly_nudged = bool(mode_cfg.get("doubly_nudged", params.doubly_nudged_default))
+        elastic_band = bool(mode_cfg.get("elastic_band", params.elastic_band_default))
+        onsager_machlup = bool(mode_cfg.get("onsager_machlup", params.om_default))
 
         neb_settings = {
             "Main": {
@@ -172,6 +189,13 @@ rule run_geometric_spring_density_case:
                 "ew_ksp_max": params.ew_ksp_max,
                 "ew_trigger": params.ew_trigger,
                 "geometric_spring": str(geometric).lower(),
+                "elastic_band": str(elastic_band).lower(),
+                "doubly_nudged": str(doubly_nudged).lower(),
+                "onsager_machlup": str(onsager_machlup).lower(),
+                "om_optimize_k": str(params.om_optimize_k).lower(),
+                "om_k_scale": params.om_k_scale,
+                "om_k_min": params.om_k_min,
+                "om_k_max": params.om_k_max,
                 "initializer": "sidpp",
                 "sidpp_growth_alpha": params.sidpp_growth_alpha,
                 "minimize_endpoints": "false",
@@ -229,8 +253,10 @@ rule summarize_geometric_spring_density:
     output:
         csv=GEOM_SWEEP_ROOT + "/summary.csv",
         markdown=GEOM_SWEEP_ROOT + "/summary.md",
+        approval=GEOM_SWEEP_ROOT + "/real_data_approval.txt",
     params:
         expected_count=GEOM_SWEEP_EXPECTED_CASES,
+        mode_baselines_json=GEOM_SWEEP_MODE_BASELINES_JSON,
     threads: 1
     resources:
         runtime=30,
@@ -244,6 +270,8 @@ rule summarize_geometric_spring_density:
           --sweep-root {GEOM_SWEEP_ROOT} \
           --output-csv {output.csv} \
           --output-md {output.markdown} \
+          --output-approval {output.approval} \
+          --mode-baselines-json '{params.mode_baselines_json}' \
           --expected-count {params.expected_count}
         """
 

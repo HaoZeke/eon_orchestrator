@@ -1,15 +1,33 @@
 # -*- mode: snakemake; -*-
 """Baker-set image-density ablation for the geometric NEB spring."""
 
+import hashlib
 from pathlib import Path
 from rgpycrumbs.eon.helpers import write_eon_config
 import json
 import os
 import shutil
 import subprocess
+import tarfile
 
 
 STUDY_ROOT = config.get("study_root", "studies/geometric_spring_baker_ablation")
+GEOM_ARCHIVE = config.get("archive", {})
+GEOM_ARCHIVE_PATH = GEOM_ARCHIVE.get("path")
+GEOM_ARCHIVE_MODEL_PATH = GEOM_ARCHIVE.get("model_path")
+GEOM_ARCHIVE_MODEL_SHA256 = GEOM_ARCHIVE.get("model_sha256")
+GEOM_ARCHIVE_ENDPOINT_ROOT = config.get("paths", {}).get(
+    "archive_endpoints",
+    f"{STUDY_ROOT}/resources/nebmmf_archive_endpoints",
+)
+GEOM_ARCHIVE_REFERENCE_ROOT = config.get("paths", {}).get(
+    "archive_reference",
+    f"{STUDY_ROOT}/results/archive_reference",
+)
+GEOM_ARCHIVE_REFERENCE_METHODS = list(GEOM_ARCHIVE.get("reference_methods", []))
+GEOM_ARCHIVE_REFERENCE_IMAGES = [
+    str(x) for x in GEOM_ARCHIVE.get("reference_images", [])
+]
 GEOM_SWEEP = config.get("sweeps", {}).get("geometric_spring_density", {})
 GEOM_SWEEP_NAME = "geometric_spring_density"
 GEOM_SWEEP_SYSTEMS = list(
@@ -50,6 +68,11 @@ GEOM_SWEEP_ROOT = (
 GEOM_SWEEP_EXPECTED_CASES = (
     len(GEOM_SWEEP_SYSTEMS) * len(GEOM_SWEEP_MODE_NAMES) * len(GEOM_SWEEP_IMAGES)
 )
+GEOM_ARCHIVE_REFERENCE_EXPECTED_CASES = (
+    len(GEOM_SWEEP_SYSTEMS)
+    * len(GEOM_ARCHIVE_REFERENCE_METHODS)
+    * len(GEOM_ARCHIVE_REFERENCE_IMAGES)
+)
 GEOM_VISUALS = GEOM_SWEEP.get("visuals", {})
 GEOM_VISUAL_SYSTEMS = list(GEOM_VISUALS.get("systems", GEOM_SWEEP_SYSTEMS))
 GEOM_VISUAL_IMAGES = [str(x) for x in GEOM_VISUALS.get("images", [90])]
@@ -64,6 +87,50 @@ GEOM_VISUAL_EXPECTED_PLOTS = (
     * len(GEOM_VISUAL_PLOT_TYPES)
 )
 UV_RUNNER = config.get("tools", {}).get("uv", "uv")
+
+
+def sha256_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def extract_archive_file(archive_path, member, output_path, expected_sha256=None):
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(archive_path, "r:*") as archive:
+        source = archive.extractfile(member)
+        if source is None:
+            raise FileNotFoundError(f"{archive_path}: missing archive member {member}")
+        with output_path.open("wb") as handle:
+            shutil.copyfileobj(source, handle)
+    if expected_sha256 is not None:
+        actual_sha256 = sha256_file(output_path)
+        if actual_sha256 != expected_sha256:
+            raise ValueError(
+                f"{output_path}: expected sha256 {expected_sha256}, got {actual_sha256}"
+            )
+
+
+def archive_endpoint_path(wildcards, endpoint):
+    return f"{GEOM_ARCHIVE_ENDPOINT_ROOT}/{wildcards.system}/{endpoint}.con"
+
+
+def geom_case_endpoint(wildcards, endpoint):
+    if GEOM_ARCHIVE.get("use_endpoints", False):
+        return archive_endpoint_path(wildcards, endpoint)
+    return config["systems"][wildcards.system][endpoint]
+
+
+def geom_archive_endpoint_outputs(endpoint):
+    if not GEOM_ARCHIVE.get("use_endpoints", False):
+        return []
+    return expand(
+        GEOM_ARCHIVE_ENDPOINT_ROOT + "/{system}/" + endpoint + ".con",
+        system=GEOM_SWEEP_SYSTEMS,
+    )
 
 
 def geom_sweep_outputs(filename):
@@ -85,10 +152,25 @@ def geom_visual_outputs(filename):
     )
 
 
+def geom_archive_reference_outputs(filename):
+    if not GEOM_ARCHIVE_REFERENCE_METHODS or not GEOM_ARCHIVE_REFERENCE_IMAGES:
+        return []
+    return expand(
+        GEOM_ARCHIVE_REFERENCE_ROOT
+        + "/{system}/archive_{method}/images_{images}/"
+        + filename,
+        system=GEOM_SWEEP_SYSTEMS,
+        method=GEOM_ARCHIVE_REFERENCE_METHODS,
+        images=GEOM_ARCHIVE_REFERENCE_IMAGES,
+    )
+
+
 rule download_study_petmad_model:
-    """Fetch and export the PET-MAD model used by the ablation."""
+    """Prepare the PET-MAD model used by the ablation."""
+    input:
+        archive=GEOM_ARCHIVE_PATH,
     output:
-        protected(f"{config['paths']['models']}/{config['model']['name']}.pt"),
+        f"{config['paths']['models']}/{config['model']['name']}.pt",
     params:
         model_name=config["model"]["name"],
         ckpt=f"{config['paths']['models']}/{config['model']['name']}.ckpt",
@@ -99,21 +181,140 @@ rule download_study_petmad_model:
         cpus_per_task=2,
         tasks=1,
         gpu=0,
-    shell:
-        """
-        mkdir -p {config[paths][models]}
-        curl -fL -o {params.ckpt} \
-          'https://huggingface.co/lab-cosmo/upet/resolve/main/models/{params.model_name}.ckpt'
-        mtt export {params.ckpt}
-        mv {params.model_name}.pt {output}
-        """
+    run:
+        if GEOM_ARCHIVE_MODEL_PATH:
+            extract_archive_file(
+                input.archive,
+                GEOM_ARCHIVE_MODEL_PATH,
+                output[0],
+                GEOM_ARCHIVE_MODEL_SHA256,
+            )
+        else:
+            Path(config["paths"]["models"]).mkdir(parents=True, exist_ok=True)
+            subprocess.run(
+                [
+                    "curl",
+                    "-fL",
+                    "-o",
+                    params.ckpt,
+                    f"https://huggingface.co/lab-cosmo/upet/resolve/main/models/{params.model_name}.ckpt",
+                ],
+                check=True,
+            )
+            subprocess.run(["mtt", "export", params.ckpt], check=True)
+            shutil.move(f"{params.model_name}.pt", output[0])
+
+
+rule extract_geometric_spring_archive_endpoint:
+    """Extract archive-minimized endpoints for a Baker system."""
+    input:
+        archive=GEOM_ARCHIVE_PATH,
+    output:
+        reactants=geom_archive_endpoint_outputs("reactant"),
+        products=geom_archive_endpoint_outputs("product"),
+    params:
+        endpoint_root=GEOM_ARCHIVE.get("endpoint_root", "results/01_endpoints"),
+    threads: 1
+    resources:
+        runtime=15,
+        mem_mb=2000,
+        cpus_per_task=1,
+        tasks=1,
+        gpu=0,
+    run:
+        with tarfile.open(input.archive, "r:*") as archive:
+            members = {
+                f"{params.endpoint_root}/{system}/{endpoint}.con": Path(
+                    GEOM_ARCHIVE_ENDPOINT_ROOT
+                )
+                / system
+                / f"{endpoint}.con"
+                for system in GEOM_SWEEP_SYSTEMS
+                for endpoint in ("reactant", "product")
+            }
+            pending = dict(members)
+            for member in archive:
+                target = pending.pop(member.name, None)
+                if target is None:
+                    continue
+                source = archive.extractfile(member)
+                if source is None:
+                    raise FileNotFoundError(
+                        f"{input.archive}: missing archive member {member.name}"
+                    )
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with target.open("wb") as handle:
+                    shutil.copyfileobj(source, handle)
+                if not pending:
+                    break
+            if pending:
+                sample = "\n".join(sorted(pending)[:20])
+                suffix = "" if len(pending) <= 20 else f"\n... {len(pending) - 20} more"
+                raise FileNotFoundError(
+                    f"{input.archive}: missing archive endpoint files:\n{sample}{suffix}"
+                )
+
+
+rule extract_geometric_spring_archive_reference:
+    """Extract exact archived NEB/MMF reference outputs."""
+    input:
+        archive=GEOM_ARCHIVE_PATH,
+    output:
+        results=geom_archive_reference_outputs("results.dat"),
+        con=geom_archive_reference_outputs("neb.con"),
+        neb=geom_archive_reference_outputs("neb.dat"),
+    params:
+        reference_root=GEOM_ARCHIVE.get("reference_root", "results/03_neb"),
+    threads: 1
+    resources:
+        runtime=15,
+        mem_mb=2000,
+        cpus_per_task=1,
+        tasks=1,
+        gpu=0,
+    run:
+        with tarfile.open(input.archive, "r:*") as archive:
+            members = {
+                f"{params.reference_root}/{system}/{method}/{filename}": Path(
+                    GEOM_ARCHIVE_REFERENCE_ROOT
+                )
+                / system
+                / f"archive_{method}"
+                / f"images_{images}"
+                / filename
+                for system in GEOM_SWEEP_SYSTEMS
+                for method in GEOM_ARCHIVE_REFERENCE_METHODS
+                for images in GEOM_ARCHIVE_REFERENCE_IMAGES
+                for filename in ("results.dat", "neb.con", "neb.dat")
+            }
+            pending = dict(members)
+            for member in archive:
+                target = pending.pop(member.name, None)
+                if target is None:
+                    continue
+                source = archive.extractfile(member)
+                if source is None:
+                    raise FileNotFoundError(
+                        f"{input.archive}: missing archive member {member.name}"
+                    )
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with target.open("wb") as handle:
+                    shutil.copyfileobj(source, handle)
+                if not pending:
+                    break
+            if pending:
+                sample = "\n".join(sorted(pending)[:20])
+                suffix = "" if len(pending) <= 20 else f"\n... {len(pending) - 20} more"
+                raise FileNotFoundError(
+                    f"{input.archive}: missing archive reference files:\n{sample}{suffix}"
+                )
 
 
 rule run_geometric_spring_density_case:
     """Run one Baker-system image-count/spring-mode case."""
     input:
-        reactant=lambda wildcards: config["systems"][wildcards.system]["reactant"],
-        product=lambda wildcards: config["systems"][wildcards.system]["product"],
+        reactant=lambda wildcards: geom_case_endpoint(wildcards, "reactant"),
+        product=lambda wildcards: geom_case_endpoint(wildcards, "product"),
         model=f"{config['paths']['models']}/{config['model']['name']}.pt",
     output:
         results_dat=GEOM_SWEEP_ROOT + "/{system}/{spring_mode}/images_{images}/results.dat",
@@ -132,7 +333,12 @@ rule run_geometric_spring_density_case:
         climbing_image_method=config.get("neb", {}).get("optimization", {}).get("climbing_image_method", True),
         ci_after_rel=config.get("neb", {}).get("optimization", {}).get("ci_after_rel", 0.5),
         ci_mmf=config.get("neb", {}).get("optimization", {}).get("ci_mmf", True),
+        ci_mmf_after_rel=config.get("neb", {}).get("optimization", {}).get("ci_mmf_after_rel", 0.5),
+        ci_mmf_angle=config.get("neb", {}).get("optimization", {}).get("ci_mmf_angle", 0.9),
         ci_mmf_nsteps=config.get("neb", {}).get("optimization", {}).get("ci_mmf_nsteps", 1000),
+        ci_mmf_ci_stability_count=config.get("neb", {}).get("optimization", {}).get("ci_mmf_ci_stability_count", 5),
+        ci_mmf_penalty_strength=config.get("neb", {}).get("optimization", {}).get("ci_mmf_penalty_strength"),
+        ci_mmf_penalty_base=config.get("neb", {}).get("optimization", {}).get("ci_mmf_penalty_base"),
         mep_relax_default=config.get("neb", {}).get("optimization", {}).get("mep_relax", False),
         mep_relax_after=config.get("neb", {}).get("optimization", {}).get("mep_relax_after", 0.2),
         mep_relax_after_rel=config.get("neb", {}).get("optimization", {}).get("mep_relax_after_rel", 0.5),
@@ -157,7 +363,10 @@ rule run_geometric_spring_density_case:
         mem_mb=config.get("resources", {}).get("neb", {}).get("mem_mb", 64000),
         cpus_per_task=config.get("resources", {}).get("neb", {}).get("cpus_per_task", 8),
         tasks=1,
-        gpu=0,
+        gpu=config.get("resources", {}).get("neb", {}).get(
+            "gpu",
+            1 if config.get("compute", {}).get("device") == "cuda" else 0,
+        ),
     run:
         thread_count = str(threads)
         os.environ["OMP_NUM_THREADS"] = thread_count
@@ -178,6 +387,69 @@ rule run_geometric_spring_density_case:
         elastic_band = bool(mode_cfg.get("elastic_band", params.elastic_band_default))
         onsager_machlup = bool(mode_cfg.get("onsager_machlup", params.om_default))
         mep_relax = bool(mode_cfg.get("mep_relax", params.mep_relax_default))
+        ci_mmf = bool(mode_cfg.get("ci_mmf", params.ci_mmf))
+        ci_mmf_after_rel = float(mode_cfg.get("ci_mmf_after_rel", params.ci_mmf_after_rel))
+        ci_mmf_angle = float(mode_cfg.get("ci_mmf_angle", params.ci_mmf_angle))
+        ci_mmf_nsteps = int(mode_cfg.get("ci_mmf_nsteps", params.ci_mmf_nsteps))
+        ci_mmf_ci_stability_count = int(
+            mode_cfg.get(
+                "ci_mmf_ci_stability_count",
+                params.ci_mmf_ci_stability_count,
+            )
+        )
+        ci_mmf_penalty_strength = mode_cfg.get(
+            "ci_mmf_penalty_strength",
+            params.ci_mmf_penalty_strength,
+        )
+        ci_mmf_penalty_base = mode_cfg.get(
+            "ci_mmf_penalty_base",
+            params.ci_mmf_penalty_base,
+        )
+
+        neb_parameters = {
+            "images": int(wildcards.images),
+            "spring": spring,
+            "energy_weighted": str(energy_weighted).lower(),
+            "ew_ksp_min": params.ew_ksp_min,
+            "ew_ksp_max": params.ew_ksp_max,
+            "ew_trigger": params.ew_trigger,
+            "geometric_spring": str(geometric).lower(),
+            "elastic_band": str(elastic_band).lower(),
+            "doubly_nudged": str(doubly_nudged).lower(),
+            "onsager_machlup": str(onsager_machlup).lower(),
+            "om_optimize_k": str(params.om_optimize_k).lower(),
+            "om_k_scale": params.om_k_scale,
+            "om_k_min": params.om_k_min,
+            "om_k_max": params.om_k_max,
+            "initializer": "sidpp",
+            "oversampling": "false",
+            "oversampling_factor": 8,
+            "sidpp_growth_alpha": params.sidpp_growth_alpha,
+            "minimize_endpoints": "false",
+            "climbing_image_method": str(params.climbing_image_method).lower(),
+            "climbing_image_converged_only": "true",
+            "ci_after": 0.5,
+            "ci_after_rel": params.ci_after_rel,
+            "ci_mmf": str(ci_mmf).lower(),
+            "ci_mmf_after": 0.1,
+            "ci_mmf_after_rel": ci_mmf_after_rel,
+            "ci_mmf_angle": ci_mmf_angle,
+            "ci_mmf_nsteps": ci_mmf_nsteps,
+            "ci_mmf_ci_stability_count": ci_mmf_ci_stability_count,
+            "mep_relax": str(mep_relax).lower(),
+            "mep_relax_after": params.mep_relax_after,
+            "mep_relax_after_rel": params.mep_relax_after_rel,
+            "mep_relax_interval": params.mep_relax_interval,
+            "mep_relax_mode_iterations": params.mep_relax_mode_iterations,
+            "mep_relax_min_kink": params.mep_relax_min_kink,
+            "mep_relax_step_factor": params.mep_relax_step_factor,
+            "mep_relax_curvature_floor": params.mep_relax_curvature_floor,
+            "mep_relax_max_tangent_alignment": params.mep_relax_max_tangent_alignment,
+        }
+        if ci_mmf_penalty_strength is not None:
+            neb_parameters["ci_mmf_penalty_strength"] = ci_mmf_penalty_strength
+        if ci_mmf_penalty_base is not None:
+            neb_parameters["ci_mmf_penalty_base"] = ci_mmf_penalty_base
 
         neb_settings = {
             "Main": {
@@ -191,44 +463,12 @@ rule run_geometric_spring_density_case:
                 "model_path": str(Path(input.model).absolute()),
                 "device": params.device,
             },
-            "Nudged Elastic Band": {
-                "images": int(wildcards.images),
-                "spring": spring,
-                "energy_weighted": str(energy_weighted).lower(),
-                "ew_ksp_min": params.ew_ksp_min,
-                "ew_ksp_max": params.ew_ksp_max,
-                "ew_trigger": params.ew_trigger,
-                "geometric_spring": str(geometric).lower(),
-                "elastic_band": str(elastic_band).lower(),
-                "doubly_nudged": str(doubly_nudged).lower(),
-                "onsager_machlup": str(onsager_machlup).lower(),
-                "om_optimize_k": str(params.om_optimize_k).lower(),
-                "om_k_scale": params.om_k_scale,
-                "om_k_min": params.om_k_min,
-                "om_k_max": params.om_k_max,
-                "initializer": "sidpp",
-                "sidpp_growth_alpha": params.sidpp_growth_alpha,
-                "minimize_endpoints": "false",
-                "climbing_image_method": str(params.climbing_image_method).lower(),
-                "climbing_image_converged_only": "true",
-                "ci_after": 0.5,
-                "ci_after_rel": params.ci_after_rel,
-                "ci_mmf": str(params.ci_mmf).lower(),
-                "ci_mmf_after": 0.1,
-                "ci_mmf_after_rel": params.ci_after_rel,
-                "ci_mmf_penalty_strength": 1.5,
-                "ci_mmf_penalty_base": 0.4,
-                "ci_mmf_angle": 0.9,
-                "ci_mmf_nsteps": params.ci_mmf_nsteps,
-                "mep_relax": str(mep_relax).lower(),
-                "mep_relax_after": params.mep_relax_after,
-                "mep_relax_after_rel": params.mep_relax_after_rel,
-                "mep_relax_interval": params.mep_relax_interval,
-                "mep_relax_mode_iterations": params.mep_relax_mode_iterations,
-                "mep_relax_min_kink": params.mep_relax_min_kink,
-                "mep_relax_step_factor": params.mep_relax_step_factor,
-                "mep_relax_curvature_floor": params.mep_relax_curvature_floor,
-                "mep_relax_max_tangent_alignment": params.mep_relax_max_tangent_alignment,
+            "Nudged Elastic Band": neb_parameters,
+            "Dimer": {
+                "improved": "true",
+                "opt_method": "cg",
+                "remove_rotation": "false",
+                "converged_angle": 10.0,
             },
             "Optimizer": {
                 "max_iterations": params.max_iterations,
@@ -261,6 +501,34 @@ rule run_geometric_spring_density_case:
             produced_path = Path(produced)
             if not produced_path.is_file() or produced_path.stat().st_size == 0:
                 raise RuntimeError(f"Missing or empty eOn output: {produced_path}")
+
+
+rule summarize_geometric_spring_archive_reference:
+    """Summarize exact archive reference outputs into CSV and Markdown tables."""
+    input:
+        results=geom_archive_reference_outputs("results.dat"),
+        con=geom_archive_reference_outputs("neb.con"),
+        neb=geom_archive_reference_outputs("neb.dat"),
+    output:
+        csv=GEOM_ARCHIVE_REFERENCE_ROOT + "/summary.csv",
+        markdown=GEOM_ARCHIVE_REFERENCE_ROOT + "/summary.md",
+    params:
+        expected_count=GEOM_ARCHIVE_REFERENCE_EXPECTED_CASES,
+    threads: 1
+    resources:
+        runtime=30,
+        mem_mb=4000,
+        cpus_per_task=1,
+        tasks=1,
+        gpu=0,
+    shell:
+        """
+        {UV_RUNNER} run --script {STUDY_ROOT}/scripts/summarize_geometric_spring_sweep.py \
+          --sweep-root {GEOM_ARCHIVE_REFERENCE_ROOT} \
+          --output-csv {output.csv} \
+          --output-md {output.markdown} \
+          --expected-count {params.expected_count}
+        """
 
 
 rule summarize_geometric_spring_density:

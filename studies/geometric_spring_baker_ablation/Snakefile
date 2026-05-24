@@ -5,7 +5,7 @@ configfile: "studies/geometric_spring_baker_ablation/config.yaml"
 
 include: "workflow/geometric_spring_density.smk"
 
-localrules: all, run_cases, summarize, analyze, figures
+localrules: all, run_cases, archive_reference, summarize, analyze, figures, selftest
 
 
 rule all:
@@ -15,7 +15,10 @@ rule all:
         GEOM_SWEEP_ROOT + "/real_data_approval.txt",
         GEOM_SWEEP_ROOT + "/bayesian_summary.md",
         GEOM_SWEEP_ROOT + "/posterior_samples.csv",
+        GEOM_ARCHIVE_REFERENCE_ROOT + "/summary.csv",
+        GEOM_ARCHIVE_REFERENCE_ROOT + "/summary.md",
         GEOM_SWEEP_ROOT + "/figures/manifest.tsv",
+        GEOM_SWEEP_ROOT + "/archive_contract.ok",
 
 
 rule run_cases:
@@ -23,6 +26,15 @@ rule run_cases:
         geom_sweep_outputs("results.dat"),
         geom_sweep_outputs("neb.con"),
         geom_sweep_outputs("neb.dat"),
+
+
+rule archive_reference:
+    input:
+        geom_archive_reference_outputs("results.dat"),
+        geom_archive_reference_outputs("neb.con"),
+        geom_archive_reference_outputs("neb.dat"),
+        GEOM_ARCHIVE_REFERENCE_ROOT + "/summary.csv",
+        GEOM_ARCHIVE_REFERENCE_ROOT + "/summary.md",
 
 
 rule summarize:
@@ -41,3 +53,15 @@ rule analyze:
 rule figures:
     input:
         GEOM_SWEEP_ROOT + "/figures/manifest.tsv",
+
+
+rule selftest:
+    output:
+        GEOM_SWEEP_ROOT + "/archive_contract.ok",
+    shell:
+        """
+        {UV_RUNNER} run --script {STUDY_ROOT}/tests/check_archive_contract.py \
+          --repo-root . \
+          --archive {GEOM_ARCHIVE_PATH}
+        touch {output}
+        """

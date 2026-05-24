@@ -86,7 +86,25 @@ GEOM_VISUAL_EXPECTED_PLOTS = (
     * len(GEOM_VISUAL_IMAGES)
     * len(GEOM_VISUAL_PLOT_TYPES)
 )
-UV_RUNNER = config.get("tools", {}).get("uv", "uv")
+
+
+def resolve_tool(name):
+    configured = config.get("tools", {}).get(name)
+    if configured:
+        return configured
+    env_value = os.environ.get(name.upper())
+    if env_value:
+        return env_value
+    resolved = shutil.which(name)
+    if resolved:
+        return resolved
+    user_local = Path.home() / ".local" / "bin" / name
+    if user_local.is_file() and os.access(user_local, os.X_OK):
+        return str(user_local)
+    return name
+
+
+UV_RUNNER = resolve_tool("uv")
 
 
 def sha256_file(path):

@@ -103,7 +103,7 @@ rule download_study_petmad_model:
         """
         mkdir -p {config[paths][models]}
         curl -fL -o {params.ckpt} \
-          'https://huggingface.co/lab-cosmo/pet-mad/resolve/{config[model][version]}/models/{params.model_name}.ckpt'
+          'https://huggingface.co/lab-cosmo/upet/resolve/main/models/{params.model_name}.ckpt'
         mtt export {params.ckpt}
         mv {params.model_name}.pt {output}
         """

@@ -119,6 +119,15 @@ neb:
     ci_after_rel: 0.5
     ci_mmf: true
     ci_mmf_nsteps: 1000
+    mep_relax: false
+    mep_relax_after: 0.2
+    mep_relax_after_rel: 0.5
+    mep_relax_interval: 10
+    mep_relax_mode_iterations: 4
+    mep_relax_min_kink: 0.2
+    mep_relax_step_factor: 0.5
+    mep_relax_curvature_floor: 0.0001
+    mep_relax_max_tangent_alignment: 0.5
     sidpp_growth_alpha: 0.33
     doubly_nudged: false
     elastic_band: false
@@ -270,6 +279,14 @@ sweeps:
         doubly_nudged: true
         onsager_machlup: true
         baseline_mode: onsager_machlup_energy_weighted_dneb
+      geometric_onsager_machlup_energy_weighted_dneb_mep:
+        spring: 5.0
+        energy_weighted: true
+        geometric_spring: true
+        doubly_nudged: true
+        onsager_machlup: true
+        mep_relax: true
+        baseline_mode: geometric_onsager_machlup_energy_weighted_dneb
     bayes:
       chains: 4
       samples: 1000
@@ -293,4 +310,5 @@ sweeps:
         - geometric_onsager_machlup_energy_weighted
         - geometric_onsager_machlup_dneb
         - geometric_onsager_machlup_energy_weighted_dneb
+        - geometric_onsager_machlup_energy_weighted_dneb_mep
       plot_types: [profile_path, profile_index, landscape_rmsd]

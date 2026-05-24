@@ -133,6 +133,15 @@ rule run_geometric_spring_density_case:
         ci_after_rel=config.get("neb", {}).get("optimization", {}).get("ci_after_rel", 0.5),
         ci_mmf=config.get("neb", {}).get("optimization", {}).get("ci_mmf", True),
         ci_mmf_nsteps=config.get("neb", {}).get("optimization", {}).get("ci_mmf_nsteps", 1000),
+        mep_relax_default=config.get("neb", {}).get("optimization", {}).get("mep_relax", False),
+        mep_relax_after=config.get("neb", {}).get("optimization", {}).get("mep_relax_after", 0.2),
+        mep_relax_after_rel=config.get("neb", {}).get("optimization", {}).get("mep_relax_after_rel", 0.5),
+        mep_relax_interval=config.get("neb", {}).get("optimization", {}).get("mep_relax_interval", 10),
+        mep_relax_mode_iterations=config.get("neb", {}).get("optimization", {}).get("mep_relax_mode_iterations", 4),
+        mep_relax_min_kink=config.get("neb", {}).get("optimization", {}).get("mep_relax_min_kink", 0.2),
+        mep_relax_step_factor=config.get("neb", {}).get("optimization", {}).get("mep_relax_step_factor", 0.5),
+        mep_relax_curvature_floor=config.get("neb", {}).get("optimization", {}).get("mep_relax_curvature_floor", 0.0001),
+        mep_relax_max_tangent_alignment=config.get("neb", {}).get("optimization", {}).get("mep_relax_max_tangent_alignment", 0.5),
         sidpp_growth_alpha=config.get("neb", {}).get("optimization", {}).get("sidpp_growth_alpha", 0.33),
         doubly_nudged_default=config.get("neb", {}).get("optimization", {}).get("doubly_nudged", False),
         elastic_band_default=config.get("neb", {}).get("optimization", {}).get("elastic_band", False),
@@ -168,6 +177,7 @@ rule run_geometric_spring_density_case:
         doubly_nudged = bool(mode_cfg.get("doubly_nudged", params.doubly_nudged_default))
         elastic_band = bool(mode_cfg.get("elastic_band", params.elastic_band_default))
         onsager_machlup = bool(mode_cfg.get("onsager_machlup", params.om_default))
+        mep_relax = bool(mode_cfg.get("mep_relax", params.mep_relax_default))
 
         neb_settings = {
             "Main": {
@@ -210,6 +220,15 @@ rule run_geometric_spring_density_case:
                 "ci_mmf_penalty_base": 0.4,
                 "ci_mmf_angle": 0.9,
                 "ci_mmf_nsteps": params.ci_mmf_nsteps,
+                "mep_relax": str(mep_relax).lower(),
+                "mep_relax_after": params.mep_relax_after,
+                "mep_relax_after_rel": params.mep_relax_after_rel,
+                "mep_relax_interval": params.mep_relax_interval,
+                "mep_relax_mode_iterations": params.mep_relax_mode_iterations,
+                "mep_relax_min_kink": params.mep_relax_min_kink,
+                "mep_relax_step_factor": params.mep_relax_step_factor,
+                "mep_relax_curvature_floor": params.mep_relax_curvature_floor,
+                "mep_relax_max_tangent_alignment": params.mep_relax_max_tangent_alignment,
             },
             "Optimizer": {
                 "max_iterations": params.max_iterations,

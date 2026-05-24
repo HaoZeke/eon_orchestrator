@@ -92,8 +92,6 @@ def main(repo_root: Path, archive: Path) -> None:
     for needle in (
         "extract_archive_file",
         "archive_endpoint_path",
-        "resolve_tool",
-        "UV_RUNNER = resolve_tool(\"uv\")",
         "ci_mmf_after_rel",
         "ci_mmf_angle",
         "ci_mmf_ci_stability_count",

@@ -4,8 +4,9 @@ This study runs the Baker icFSM set as a Snakemake matrix over spring strategy
 and image count. The NEB cells are:
 
 - systems: all 24 Baker systems in =resources/icFSM_baker=
-- spring modes: Hookean, geometric, and Onsager-Machlup spring laws crossed
-  with energy weighting and DNEB projection layers
+- spring modes: Hookean, geometric, Onsager-Machlup, and geometric
+  Onsager-Machlup spring laws crossed with energy weighting and DNEB
+  projection layers
 - image counts: =18, 36, 54, 72, 90=
 
 The default target runs the NEB matrix, summarizes =results.dat= and =neb.dat=,

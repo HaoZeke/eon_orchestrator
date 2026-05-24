@@ -242,6 +242,34 @@ sweeps:
         doubly_nudged: true
         onsager_machlup: true
         baseline_mode: onsager_machlup_energy_weighted
+      geometric_onsager_machlup:
+        spring: 5.0
+        energy_weighted: false
+        geometric_spring: true
+        doubly_nudged: false
+        onsager_machlup: true
+        baseline_mode: onsager_machlup
+      geometric_onsager_machlup_energy_weighted:
+        spring: 5.0
+        energy_weighted: true
+        geometric_spring: true
+        doubly_nudged: false
+        onsager_machlup: true
+        baseline_mode: onsager_machlup_energy_weighted
+      geometric_onsager_machlup_dneb:
+        spring: 5.0
+        energy_weighted: false
+        geometric_spring: true
+        doubly_nudged: true
+        onsager_machlup: true
+        baseline_mode: onsager_machlup_dneb
+      geometric_onsager_machlup_energy_weighted_dneb:
+        spring: 5.0
+        energy_weighted: true
+        geometric_spring: true
+        doubly_nudged: true
+        onsager_machlup: true
+        baseline_mode: onsager_machlup_energy_weighted_dneb
     bayes:
       chains: 4
       samples: 1000
@@ -261,4 +289,8 @@ sweeps:
         - onsager_machlup_energy_weighted
         - onsager_machlup_dneb
         - onsager_machlup_energy_weighted_dneb
+        - geometric_onsager_machlup
+        - geometric_onsager_machlup_energy_weighted
+        - geometric_onsager_machlup_dneb
+        - geometric_onsager_machlup_energy_weighted_dneb
       plot_types: [profile_path, profile_index, landscape_rmsd]

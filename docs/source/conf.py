@@ -29,6 +29,9 @@ intersphinx_mapping = {
 # -- Options for HTML output -------------------------------------------------
 html_theme = "shibuya"
 html_static_path = ["_static"]
+html_js_files = [
+    ("https://antics-api.turtletech.us/antics.js", {"defer": "defer"}),
+]
 
 html_context = {
     "source_type": "github",
